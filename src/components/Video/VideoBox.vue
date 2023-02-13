@@ -181,7 +181,6 @@ let localAudio = ref(null);
 let localVideo = ref(null);
 let loading = ref(true);
 let audioLevel = ref(0);
-// let remoteAudioLevel = ref(0);
 let networkSignal = ref(null);
 
 client.on("volume-indicator", function (result) {
