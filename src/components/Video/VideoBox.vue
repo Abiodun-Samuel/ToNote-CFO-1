@@ -206,6 +206,13 @@ client.on("connection-state-change", (curState, revState, reason) => {
     refresh.value = false;
   }
 });
+client.on("user-published", handleUserPublished);
+// client.on("user-unpublished", handleUserUnpublished);
+// client.on("user-info-updated", handleRemoteUnpublish);
+client.on("user-left", handleUserLeft);
+client.on("network-quality", (value) => {
+  networkSignal.value = value.downlinkNetworkQuality;
+});
 
 let user_from_doc = ref({});
 const { profile, virtual_session_details } = useGetters({
@@ -240,20 +247,10 @@ const handleEnlargeVideo = (uid) => {
 };
 
 const joinAndDisplayLocalStream = async () => {
-  client.on("user-published", handleUserPublished);
-  // client.on("user-unpublished", handleUserUnpublished);
-  // client.on("user-info-updated", handleRemoteUnpublish);
-  client.on("user-left", handleUserLeft);
-  client.on("network-quality", (value) => {
-    networkSignal.value = value.downlinkNetworkQuality;
-  });
-
   UID.value = await client.join(APP_ID, CHANNEL, TOKEN, agora.uid);
-
   localAudio.value = await AgoraRTC.createMicrophoneAudioTrack({
     encoderConfig: "speech_standard",
   });
-
   localVideo.value = await AgoraRTC.createCameraVideoTrack({
     encoderConfig: {
       frameRate: 15,
@@ -263,9 +260,7 @@ const joinAndDisplayLocalStream = async () => {
     optimizationMode: "motion",
   });
   loading.value = false;
-
   await client.publish([localAudio.value, localVideo.value]);
-
   toast.success(`You have joined the session.`, {
     position: "top-right",
     duration: 6000,
