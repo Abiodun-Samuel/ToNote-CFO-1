@@ -4,7 +4,7 @@
       <h5 class="fw-bolder">Is your document ready?</h5>
       <p class="fw-light my-1">
         Before your session is set up, please confirm if you have your document
-        ready or if you need a template from notary public.
+        ready or if you need a template from commissioner for oaths.
       </p>
 
       <!-- select template type button  -->
