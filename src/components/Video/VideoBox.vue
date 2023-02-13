@@ -206,13 +206,6 @@ client.on("connection-state-change", (curState, revState, reason) => {
     refresh.value = false;
   }
 });
-client.on("user-published", handleUserPublished);
-// client.on("user-unpublished", handleUserUnpublished);
-// client.on("user-info-updated", handleRemoteUnpublish);
-client.on("user-left", handleUserLeft);
-client.on("network-quality", (value) => {
-  networkSignal.value = value.downlinkNetworkQuality;
-});
 
 let user_from_doc = ref({});
 const { profile, virtual_session_details } = useGetters({
@@ -321,6 +314,14 @@ const handleUserLeft = async (user) => {
     duration: 6000,
   });
 };
+
+client.on("user-published", handleUserPublished);
+// client.on("user-unpublished", handleUserUnpublished);
+// client.on("user-info-updated", handleRemoteUnpublish);
+client.on("user-left", handleUserLeft);
+client.on("network-quality", (value) => {
+  networkSignal.value = value.downlinkNetworkQuality;
+});
 
 const toggleMic = async () => {
   if (localAudio.value.muted) {
