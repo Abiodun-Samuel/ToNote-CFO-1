@@ -286,8 +286,8 @@ onMounted(() => {
   //   let name = companyName.value == undefined ? "Name" : companyName.value;
   //  let address =
   //    companyAddress.value == undefined ? "Address" : companyAddress.value;
-  rc.value =
-    companyRC.value == undefined ? `NOTARY \n PUBLIC` : companyRC.value;
+  // rc.value =
+  //   companyRC.value == undefined ? `NOTARY \n PUBLIC` : companyRC.value;
   // rc.value = companyRC.value == undefined ? `SC NUMBER` : companyRC.value;
   const coy_number1 = document.getElementById("coy_number1");
   coy_number1.innerText = rc.value;
