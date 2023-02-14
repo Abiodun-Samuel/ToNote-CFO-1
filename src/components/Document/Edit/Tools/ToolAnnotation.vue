@@ -103,7 +103,7 @@
       v-if="tool.tool_name == 'Textarea'"
       type="text"
       v-model="tool.append_print.value"
-      class="textareaTool h-100"
+      class="textareaTool h-100 w-100"
       @blur="textInput($event.target, tool)"
       placeholder="Input text here"
       style="
@@ -392,9 +392,9 @@ const remove = (params) => {
   emit("remove", params);
 };
 
-const textWidth = ref(120);
+const textWidth = ref(60);
 const autoResize = {
-  minWidth: 120,
+  minWidth: 60,
   maxWidth: 900,
   buffer: 0,
 

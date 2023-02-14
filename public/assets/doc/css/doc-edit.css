@@ -59,10 +59,22 @@
 
 .textarea2,
 .textareaTool {
+  border: none;
+  outline: none;
+  font-weight: 500;
+  transition: width 0.25s;
+  color: #000 !important;
+  overflow: hidden;
+  resize: none;
+  background: transparent;
+}
+
+/* .textarea2,
+.textareaTool {
   resize: both;
   border: none;
   background: transparent;
-}
+} */
 
 .Textarea {
   position: absolute;

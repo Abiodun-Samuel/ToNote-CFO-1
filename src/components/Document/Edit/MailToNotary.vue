@@ -238,7 +238,7 @@ const { useActions, useGetters } = createNamespacedHelpers(["document"]);
 const { userDocument } = useGetters(["userDocument"]);
 const { invitationMail } = useActions(["invitationMail"]);
 
-const email = ref("submissions@notary.gov.ng");
+const email = ref("submissions@supremecourt.gov.ng");
 const participants = ref(null);
 participants.value = userDocument.value.participants.filter(
   (p) => p.role != "Notary" && !p.iAddedMyselfToDocument

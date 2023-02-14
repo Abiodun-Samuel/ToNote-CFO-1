@@ -353,10 +353,11 @@ export const editTools = ({ commit }, formData) => {
 
   Document.updateTool(formData.id, formData.payload)
     .then((response) => {
-      socket.emit(events.NOTARY_EDIT_TOOLS, JSON.stringify(response.data.data));
+      console.log(response.data.data);
+      // commit("SET_EDIT_RESOURCE_TOOL", response.data.data);
       commit("SET_EDIT_RESOURCE_TOOL", response.data.data);
+      socket.emit(events.NOTARY_EDIT_TOOLS, JSON.stringify(response.data.data));
       if (formData.payload.tool_name) {
-        // commit("SET_EDIT_RESOURCE_TOOL", response.data.data);
         setTimeout(() => {
           commit("SET_TOOL_LOADER", { id: "", active: false });
         }, 600);
