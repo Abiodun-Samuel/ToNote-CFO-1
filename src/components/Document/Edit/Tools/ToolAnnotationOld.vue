@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
+  <!-- owner.isOwner == true -->
   <Vue3DraggableResizable
     v-if="tool.append_print == null"
     :key="tool.id"
@@ -11,14 +12,25 @@
     v-model:y="y"
     :parent="true"
     :draggable="
-      profile.id == tool.user_id || owner.isOwner == true || is_notary
+      comp == 'audit' ? false : profile.id == tool.user_id || is_notary
     "
     :resizable="false"
     @drag-end="dragEnd($event, tool)"
     class="image-area"
     :class="tool.tool_class"
   >
-    <div class="h-100" @click="getUserId(tool)">
+    <div
+      class="h-100"
+      :style="{
+        outline:
+          '2px solid ' +
+          ((owner.isOwner && profile.id == tool.user_id) ||
+          owner.name.includes(hex.name)
+            ? '#28C76F'
+            : hex.code),
+      }"
+      @click="getUserId(tool)"
+    >
       <div v-if="tool.tool_name == 'Photo'">
         <img src="@/assets/noimage.png" class="img-fluid" alt="Preview" />
       </div>
@@ -38,7 +50,7 @@
     </div>
 
     <template
-      v-if="profile.id == tool.user_id || owner.isOwner == true || is_notary"
+      v-if="comp == 'audit' ? false : profile.id == tool.user_id || is_notary"
     >
       <span class="drag-me">
         <span title="Drag" class="btn btn-xs btn-secondary rounded-0 movement">
@@ -56,49 +68,85 @@
         </span>
       </span>
     </template>
-    <ParticipantName :userId="tool.user_id" />
+    <ParticipantName :userId="tool.user_id" @code="code" />
   </Vue3DraggableResizable>
   <Vue3DraggableResizable
     v-else
     :initW="Number(tool.tool_width)"
     :initH="Number(tool.tool_height)"
-    :minW="95"
-    :minH="30"
+    :minW="tool.tool_name == 'Textarea' ? 62 : 95"
+    :minH="tool.tool_name == 'Textarea' ? 24 : 30"
     :x="Number(tool.tool_pos_left)"
     :y="Number(tool.tool_pos_top)"
     :parent="true"
     v-model:x="x"
     v-model:y="y"
-    v-model:h="toolHeight"
-    v-model:w="toolWidth"
+    v-model:h="tool.tool_height"
+    v-model:w="tool.tool_width"
     @drag-end="dragEnd($event, tool)"
-    @resize-end="resizeEnd(tool, toolWidth, toolHeight)"
+    @resize-end="resizeEnd($event, tool)"
+    @activated="print(tool.tool_name)"
     :draggable="
-      profile.id == tool.user_id || owner.isOwner == true || is_notary
+      comp == 'audit' ? false : profile.id == tool.user_id || is_notary
     "
-    :resizable="
-      profile.id == tool.user_id || owner.isOwner == true || is_notary
-    "
+    :resizable="comp == 'audit' ? false : profile.id == tool.user_id"
     :class="[
       tool.tool_name == 'Textarea' ? 'text-wrapper z-indexed' : 'image-area',
     ]"
     :lockAspectRatio="['Seal', 'Stamp'].includes(tool.tool_name) ? true : false"
     :handles="['tl', 'tr', 'bl', 'br']"
-    class-name-active="active-class"
+    :class-name-active="{ 'active-class': tool.tool_name != 'Textarea' }"
     class-name-dragging="dragging-class"
     class-name-handle="handle-class"
     class-name-resizing="resizing-class"
   >
-    <input
+    <div
+      v-if="tool.tool_name == 'Textarea'"
+      :style="{ height: textHeight + 'px' }"
+    >
+      <textarea
+        v-model="textValue"
+        class="textareaTool w-100 h-100"
+        :class="{ 'tool-border': activatedTool }"
+        @blur="textInput($event.target, tool)"
+        placeholder="Text"
+        :style="{
+          '--placeholder-color':
+            (owner.isOwner && profile.id == tool.user_id) ||
+            owner.name.includes(hex.name)
+              ? '#28C76F'
+              : hex.code,
+        }"
+        :disabled="
+          comp == 'audit' ? true : tool.user_id != profile.id ? true : false
+        "
+      ></textarea>
+    </div>
+    <!-- <input
       v-if="tool.tool_name == 'Textarea'"
       type="text"
       v-model="tool.append_print.value"
-      class="textareaTool w-100 h-100"
+      class="textareaTool h-100 w-100"
       @blur="textInput($event.target, tool)"
       placeholder="Input text here"
-      :disabled="tool.user_id != profile.id ? true : false"
-      style="border: none; outline: none; font-weight: 500"
-    />
+      style="
+        border: none;
+        outline: none;
+        font-weight: 500;
+        transition: width 0.25s;
+        color: #000 !important;
+      "
+      :style="{
+        '--placeholder-color':
+          (owner.isOwner && profile.id == tool.user_id) ||
+          owner.name.includes(hex.name)
+            ? '#28C76F'
+            : hex.code,
+      }"
+      :disabled="
+        comp == 'audit' ? true : tool.user_id != profile.id ? true : false
+      "
+    /> -->
 
     <template v-else>
       <div
@@ -109,10 +157,8 @@
       </div>
       <img
         v-else
-        crossOrigin="Anonymous"
         :src="b64"
         @contextmenu.prevent="false"
-        class="w-100 h-100"
         :style="[
           ['Draw', 'Upload', 'Type'].includes(tool.append_print.category)
             ? 'object-fit: scale-down'
@@ -122,7 +168,7 @@
     </template>
 
     <template
-      v-if="profile.id == tool.user_id || owner.isOwner == true || is_notary"
+      v-if="comp == 'audit' ? false : profile.id == tool.user_id || is_notary"
     >
       <span class="drag-me">
         <span title="Drag" class="btn btn-xs btn-secondary rounded-0 movement">
@@ -149,7 +195,7 @@
         </span>
       </span>
     </template>
-    <ParticipantName :userId="tool.user_id" />
+    <ParticipantName :userId="tool.user_id" @code="code" />
   </Vue3DraggableResizable>
 
   <Teleport to="body">
@@ -270,11 +316,7 @@ const { dragEnd, resizeEnd } = useDragResizeComposable();
 const { toBase64 } = useConvertToBase64Composable();
 
 const toast = useToast();
-const props = defineProps({
-  tool: Object,
-  owner: Object,
-  disabledTools: Boolean,
-});
+const props = defineProps({ tool: Object, owner: Object, comp: String });
 
 const { profile, isToolLoading, is_notary } = useGetters({
   profile: "auth/profile",
@@ -285,6 +327,9 @@ const { profile, isToolLoading, is_notary } = useGetters({
 const { editTools } = useActions({
   editTools: "document/editTools",
 });
+
+const hex = ref("");
+const code = (params) => (hex.value = params);
 
 const toolWidth = ref(0);
 const toolHeight = ref(0);
@@ -319,6 +364,7 @@ const uploadImage = ref(false);
 const toolId = ref(null);
 
 const getUserId = (params) => {
+  if (props.comp == "audit") return;
   const toaster = (message) => {
     toast.error(message, {
       timeout: 5000,
@@ -334,7 +380,7 @@ const getUserId = (params) => {
     if (params.tool_name == "Stamp")
       return toaster("Sorry, you cannot upload this stamp");
     if (params.tool_name == "Photo")
-      return toaster("Sorry, you cannot upload this image");
+      return toaster("Sorry, you cannot upload this passport");
   }
 
   if (params.tool_name == "Seal") sealModal.value = true;
@@ -347,13 +393,20 @@ const getUserId = (params) => {
   toolId.value = params.id;
 };
 
+const textValue = ref(
+  props.tool.append_print?.value != "" ? props.tool.append_print?.value : ""
+);
+
 const textInput = (e, params) => {
+  activatedTool.value = false;
+
   const data = {
     append_print_id: params.append_print.id,
     document_upload_id: params.document_upload_id,
     value: e.value,
     type: "Text",
     category: "Type",
+    tool_width: textWidth.value.toString(),
   };
   editTools({ id: params.id, payload: data });
 };
@@ -368,7 +421,75 @@ const remove = (params) => {
   emit("remove", params);
 };
 
+const activatedTool = ref(false);
+const print = (params) => {
+  if (params == "Textarea") activatedTool.value = true;
+};
+
+const textWidth = ref(62);
+const textHeight = ref(24);
+const autoResize = {
+  minWidth: 62,
+  maxWidth: 600,
+  buffer: 0,
+
+  resize: function (el) {
+    const test = document.createElement("pre");
+    test.className = "input-test";
+    test.innerHTML = el.value;
+    el.parentNode.appendChild(test);
+
+    let numberOfLineBreaks = (el.value.match(/\n/g) || []).length;
+    // min - height + lines x line - height + padding + border
+    let newHeight = 10 + numberOfLineBreaks * 20 + 12 + 2;
+
+    const calculatedWidth = Math.min(
+      Math.max(test.offsetWidth + this.buffer, this.minWidth),
+      this.maxWidth
+    );
+    el.parentElement.style.width = calculatedWidth + "px";
+    // el.style.width = calculatedWidth + "px";
+    textWidth.value = calculatedWidth;
+
+    // const calculatedHeight = newHeight;
+    const calculatedHeight =
+      calculatedWidth < 600 ? newHeight : el.scrollHeight;
+    el.parentElement.style.height = calculatedHeight + "px";
+    // el.style.height = calculatedHeight + "px";
+    textHeight.value = calculatedHeight;
+
+    el.parentNode.removeChild(test);
+  },
+
+  init: function () {
+    let els = document.getElementsByClassName("textareaTool"),
+      i = els.length;
+
+    while (i--) {
+      els[i].addEventListener(
+        "keydown",
+        function () {
+          autoResize.resize(this);
+        },
+        false
+      );
+
+      els[i].addEventListener(
+        "keyup",
+        function () {
+          autoResize.resize(this);
+        },
+        false
+      );
+
+      this.resize(els[i]);
+    }
+  },
+};
+
 onMounted(() => {
+  autoResize.init();
+
   if (props.tool.append_print != null) {
     toBase64(props.tool.append_print.file, (dataUrl) => {
       if (dataUrl != "") {
@@ -379,11 +500,68 @@ onMounted(() => {
 });
 </script>
 
+<style>
+.input-test {
+  display: inline;
+  visibility: hidden;
+}
+/* input::-webkit-input-placeholder {
+  color: var(--placeholder-color);
+}
+
+input:-moz-placeholder {
+  color: var(--placeholder-color);
+}
+
+input::-moz-placeholder {
+  color: var(--placeholder-color);
+}
+
+input:-ms-input-placeholder {
+  color: var(--placeholder-color);
+} */
+</style>
+
 <style scoped>
 .z-indexed {
   z-index: 1;
 }
+textarea::-webkit-input-placeholder {
+  color: var(--placeholder-color);
+}
 
+textarea:-moz-placeholder {
+  color: var(--placeholder-color);
+}
+
+textarea::-moz-placeholder {
+  color: var(--placeholder-color);
+}
+
+textarea:-ms-input-placeholder {
+  color: var(--placeholder-color);
+}
+
+.tool-border {
+  outline: 1px solid #003bb3 !important;
+}
+
+.z-indexed {
+  z-index: 1;
+}
+
+.grid {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.spinner-border {
+  width: 1rem;
+  height: 1rem;
+  font-size: 12px;
+}
 .grid {
   width: 100%;
   height: 100%;

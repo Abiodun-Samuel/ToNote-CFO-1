@@ -10,7 +10,7 @@
   "dependencies": {
     "@vue/compiler-sfc": "^3.2.37",
     "@vue/component-compiler-utils": "^3.1.2",
-    "agora-rtc-sdk-ng": "^4.16.0",
+    "agora-rtc-sdk-ng": "^4.14.0",
     "aos": "^2.3.4",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",

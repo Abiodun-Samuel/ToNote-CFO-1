@@ -58,7 +58,7 @@
         >
       </div>
     </div>
-    <!-- <button @click="leaveAndRemoveLocalStream">leave</button> -->
+    
     <div v-if="loading">
       <SkeletonLoader height="160px" width="210px" :small="true" />
     </div>
@@ -350,9 +350,6 @@ const toggleCamera = async () => {
 const refresh_video = () => {
   window.location.reload();
 };
-// const joinStream = async () => {
-//   await joinAndDisplayLocalStream();
-// };
 
 const leaveAndRemoveLocalStream = async () => {
   await client.leave(`user-container-${UID.value}`);

@@ -60,8 +60,11 @@ export const finishAnnotation = ({ commit }, formData) => {
 
 export const getUserDocument = ({ commit }, docId) => {
   commit("SET_DOCUMENT_LOADER", true);
-  Document.showDocument(docId)
-    .then((response) => commit("SET_DOCUMENT", response.data.data))
+  return Document.showDocument(docId)
+    .then((response) => {
+      commit("SET_DOCUMENT", response.data.data);
+      return true;
+    })
     .then(() => setTimeout(() => commit("SET_DOCUMENT_LOADER", false), 1000))
     .catch((error) => {
       commit("SET_DOCUMENT_LOADER", false);
@@ -69,6 +72,7 @@ export const getUserDocument = ({ commit }, docId) => {
         commit("SET_TOKEN", null);
         router.push({ name: "Login" });
       }
+      return false;
     });
 };
 
@@ -337,8 +341,7 @@ export const resourceTools = ({ commit, getters }, formData) => {
       });
     })
     .catch((error) => {
-      commit("SET_LOADER", false);
-      console.log(error);
+      if (error) commit("SET_LOADER", false);
     });
 };
 
@@ -353,8 +356,6 @@ export const editTools = ({ commit }, formData) => {
 
   Document.updateTool(formData.id, formData.payload)
     .then((response) => {
-      console.log(response.data.data);
-      // commit("SET_EDIT_RESOURCE_TOOL", response.data.data);
       commit("SET_EDIT_RESOURCE_TOOL", response.data.data);
       socket.emit(events.NOTARY_EDIT_TOOLS, JSON.stringify(response.data.data));
       if (formData.payload.tool_name) {
@@ -364,8 +365,7 @@ export const editTools = ({ commit }, formData) => {
       }
     })
     .catch((error) => {
-      console.log(error);
-      commit("SET_TOOL_LOADER", { id: "", active: false });
+      if (error) commit("SET_TOOL_LOADER", { id: "", active: false });
     });
 };
 

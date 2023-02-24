@@ -60,21 +60,17 @@
 .textarea2,
 .textareaTool {
   border: none;
-  outline: none;
   font-weight: 500;
-  transition: width 0.25s;
   color: #000 !important;
   overflow: hidden;
   resize: none;
   background: transparent;
+  width: 100%;
+  min-height: 100%;
 }
-
-/* .textarea2,
-.textareaTool {
-  resize: both;
-  border: none;
-  background: transparent;
-} */
+.tool-border:focus {
+  outline: none;
+}
 
 .Textarea {
   position: absolute;
@@ -153,9 +149,9 @@
   cursor: move;
 }
 
-.text-wrapper:hover .textareaTool {
-  border: 1px solid #000;
-}
+/* .text-wrapper:hover .textareaTool {
+  border: 1px solid #000
+} */
 
 /* .text-wrapper .ui-resizable-helper {
   border: 1px solid #003BB3 !important;
@@ -186,7 +182,7 @@
 }
 
 .textareaTool:focus {
-  border: 1px solid #ccc;
+  outline: 1px solid #ccc;
 }
 
 .title img {
@@ -323,7 +319,7 @@
   font-size: 12px;
   line-height: 18px;
   font-weight: 500;
-  border: 2px solid #7b7171;
+  /* border: 2px solid #7B7171; */
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -405,7 +401,7 @@
 .sidebar-nav.sticky {
   position: fixed;
   top: 100px;
-  /* bottom: 0; */
+  bottom: 0;
 }
 
 .sidebar-wrap {

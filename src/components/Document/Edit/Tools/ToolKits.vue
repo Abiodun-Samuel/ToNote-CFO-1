@@ -216,7 +216,6 @@ watch(
 );
 
 const isSignerSelected = (params) => {
-  console.log(params);
   if (params.userEmail == "" || params.color == null || !params.active)
     return toast.error("Kindly select a signer!", {
       timeout: 5000,

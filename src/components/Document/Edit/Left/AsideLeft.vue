@@ -128,17 +128,18 @@
     </div>
   </div>
 
-  <div class="tool-box textTool" id="textTool">
-    <input
+  <div class="tool-box tool-style textTool" id="textTool">
+    <div class="element">Text<i data-feather="arrow-down-right"></i></div>
+    <!-- <input
       aria-invalid="false"
       type="text"
       class="v-textareaTool w-100"
       value=""
-    />
+    /> -->
   </div>
 
   <div class="tool-box tool-style signTool" id="signTool">
-    <div class="element">Sign<i data-feather="arrow-down-right"></i></div>
+    <div class="element">Signature<i data-feather="arrow-down-right"></i></div>
   </div>
 
   <div class="tool-box tool-style initialTool" id="initialTool">
@@ -206,6 +207,7 @@ import $ from "jquery";
 import ToolKits from "@/components/Document/Edit/Tools/ToolKits.vue";
 // import AddSelfToSignatories from "./AddSelfToSignatories.vue";
 import ComplianceQuestionnaire from "@/components/Compliance/ComplianceQuestionnaire.vue";
+import { randomId } from "@/utils/helper";
 
 const {
   profile,
@@ -349,13 +351,15 @@ const selectSigner = (e) => {
 //     userId: participantId.value,
 //   };
 // };
-
+const allToolsId = ref([]);
 const addMouseMoveListener = (params) => {
   tempData.value = true;
-  let count = 1;
+  // let count = 1;
+  let count = randomId(10);
+  allToolsId.value.push(count);
   tempStorage.value = params;
   $(document).bind("mousemove", function (e) {
-    count = count + 1;
+    // count = count + 1;
     tool_id.value = count;
     $("." + params.toolId).attr("id", count);
     $("." + params.toolId).css({
@@ -368,7 +372,17 @@ const addMouseMoveListener = (params) => {
 
 $(document).on("click", "#mainWrapper", function (e) {
   if (tempStorage.value == null) return;
-  $("#" + tool_id.value).css("display", "none");
+  // $("#" + tool_id.value).css("display", "none");
+  console.log(allToolsId.value);
+  if (allToolsId.value.length) {
+    allToolsId.value.forEach((e) => {
+      $("#" + e).css("display", "none");
+    });
+  }
+  // const element = document.querySelectorAll(".element");
+  // if (element.length) {
+  //   element.forEach((e) => (e.style.display = "none"));
+  // }
   removeMouseMoveListener();
 
   let posX = $(this).offset().left;
@@ -378,7 +392,7 @@ $(document).on("click", "#mainWrapper", function (e) {
   let y = e.offsetY - 5;
 
   const toolName = tempStorage.value.tool_name;
-  if (toolName == "Sign" || toolName == "Initial") {
+  if (toolName == "Signature" || toolName == "Initial") {
     tool_class.value = "tool-box main-element";
   } else if (toolName == "Textarea" || toolName == "Date") {
     tool_class.value = "main-element";
@@ -393,8 +407,8 @@ $(document).on("click", "#mainWrapper", function (e) {
     user_id: participantId.value == "" ? profile.value.id : participantId.value,
     tool_name: toolName,
     tool_class: tool_class.value,
-    tool_width: toolName == "Textarea" ? "120" : "100",
-    tool_height: toolName == "Textarea" ? "25" : "40",
+    tool_width: toolName == "Textarea" ? "62" : "100",
+    tool_height: toolName == "Textarea" ? "24" : "40",
     tool_pos_top: y.toString(),
     tool_pos_left: x.toString(),
     category: toolName == "Textarea" ? "Type" : "",
@@ -406,6 +420,7 @@ $(document).on("click", "#mainWrapper", function (e) {
     resourceTools(saveTools);
     tempData.value = false;
   }
+  allToolsId.value = [];
 });
 
 function removeMouseMoveListener() {

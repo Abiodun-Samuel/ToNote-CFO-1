@@ -1,6 +1,5 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-  <!-- owner.isOwner == true -->
   <Vue3DraggableResizable
     v-if="tool.append_print == null"
     :key="tool.id"
@@ -12,7 +11,9 @@
     v-model:y="y"
     :parent="true"
     :draggable="
-      comp == 'audit' ? false : profile.id == tool.user_id || is_notary
+      comp == 'audit'
+        ? false
+        : profile.id == tool.user_id || owner.isOwner == true
     "
     :resizable="false"
     @drag-end="dragEnd($event, tool)"
@@ -50,7 +51,11 @@
     </div>
 
     <template
-      v-if="comp == 'audit' ? false : profile.id == tool.user_id || is_notary"
+      v-if="
+        comp == 'audit'
+          ? false
+          : profile.id == tool.user_id || owner.isOwner == true
+      "
     >
       <span class="drag-me">
         <span title="Drag" class="btn btn-xs btn-secondary rounded-0 movement">
@@ -58,7 +63,6 @@
         </span>
 
         <span
-          v-if="is_notary"
           title="Remove"
           class="btn btn-xs btn-secondary rounded-0 remove"
           @click="remove({ toolId: tool.id })"
@@ -74,21 +78,28 @@
     v-else
     :initW="Number(tool.tool_width)"
     :initH="Number(tool.tool_height)"
-    :minW="95"
-    :minH="30"
+    :minW="tool.tool_name == 'Textarea' ? 62 : 95"
+    :minH="24"
     :x="Number(tool.tool_pos_left)"
     :y="Number(tool.tool_pos_top)"
     :parent="true"
     v-model:x="x"
     v-model:y="y"
-    v-model:h="toolHeight"
-    v-model:w="toolWidth"
+    v-model:h="textHeight"
+    v-model:w="textWidth"
     @drag-end="dragEnd($event, tool)"
-    @resize-end="resizeEnd(tool, toolWidth, toolHeight)"
+    @resize-end="resizeEnd($event, tool)"
+    @activated="print(tool.tool_name)"
     :draggable="
-      comp == 'audit' ? false : profile.id == tool.user_id || is_notary
+      comp == 'audit'
+        ? false
+        : profile.id == tool.user_id || owner.isOwner == true
     "
-    :resizable="comp == 'audit' ? false : profile.id == tool.user_id"
+    :resizable="
+      comp == 'audit'
+        ? false
+        : profile.id == tool.user_id || owner.isOwner == true
+    "
     :class="[
       tool.tool_name == 'Textarea' ? 'text-wrapper z-indexed' : 'image-area',
     ]"
@@ -99,32 +110,28 @@
     class-name-handle="handle-class"
     class-name-resizing="resizing-class"
   >
-    <input
-      v-if="tool.tool_name == 'Textarea'"
-      type="text"
-      v-model="tool.append_print.value"
-      class="textareaTool h-100 w-100"
-      @blur="textInput($event.target, tool)"
-      placeholder="Input text here"
-      style="
-        border: none;
-        outline: none;
-        font-weight: 500;
-        transition: width 0.25s;
-        color: #000 !important;
-      "
-      :style="{
-        '--placeholder-color':
-          (owner.isOwner && profile.id == tool.user_id) ||
-          owner.name.includes(hex.name)
-            ? '#28C76F'
-            : hex.code,
-      }"
-      :disabled="
-        comp == 'audit' ? true : tool.user_id != profile.id ? true : false
-      "
-    />
+    <!-- <textarea v-if="tool.tool_name == 'Textarea'" v-model="textValue" class="textareaTool w-100 h-100" -->
+    <!-- :style="{ height: textHeight + 'px' }" -->
+    <!-- :class="{ 'tool-border': activatedTool }" -->
 
+    <template v-if="tool.tool_name == 'Textarea'">
+      <textarea
+        v-model="tool.append_print.value"
+        class="textareaTool w-100 h-100"
+        @blur="textInput($event.target, tool)"
+        placeholder="Text"
+        :style="{
+          '--placeholder-color':
+            (owner.isOwner && profile.id == tool.user_id) ||
+            owner.name.includes(hex.name)
+              ? '#28C76F'
+              : hex.code,
+        }"
+        :disabled="
+          comp == 'audit' ? true : tool.user_id != profile.id ? true : false
+        "
+      ></textarea>
+    </template>
     <template v-else>
       <div
         class="grid"
@@ -145,7 +152,11 @@
     </template>
 
     <template
-      v-if="comp == 'audit' ? false : profile.id == tool.user_id || is_notary"
+      v-if="
+        comp == 'audit'
+          ? false
+          : profile.id == tool.user_id || owner.isOwner == true
+      "
     >
       <span class="drag-me">
         <span title="Drag" class="btn btn-xs btn-secondary rounded-0 movement">
@@ -162,7 +173,6 @@
         </span>
 
         <span
-          v-if="is_notary"
           title="Remove"
           class="btn btn-xs btn-secondary rounded-0 remove"
           @click="remove({ printId: tool.append_print.id, toolId: tool.id })"
@@ -179,7 +189,7 @@
     <ModalComp
       :show="affixModal"
       :footer="false"
-      :size="'modal-lg'"
+      :size="'modal-md'"
       @close="affixModal = false"
     >
       <template #header>
@@ -253,7 +263,7 @@
     <ModalComp
       :show="uploadImage"
       :footer="false"
-      :size="'modal-lg'"
+      :size="'modal-md'"
       @close="uploadImage = false"
     >
       <template #header>
@@ -295,10 +305,9 @@ const { toBase64 } = useConvertToBase64Composable();
 const toast = useToast();
 const props = defineProps({ tool: Object, owner: Object, comp: String });
 
-const { profile, isToolLoading, is_notary } = useGetters({
+const { profile, isToolLoading } = useGetters({
   profile: "auth/profile",
   isToolLoading: "document/isToolLoading",
-  is_notary: "auth/is_notary",
 });
 
 const { editTools } = useActions({
@@ -315,8 +324,8 @@ watch(
   () => props.tool,
   (newTool, oldTool) => {
     if (newTool != oldTool) {
-      toolWidth.value = Number(newTool.tool_width);
-      toolHeight.value = Number(newTool.tool_height);
+      textWidth.value = toolWidth.value = Number(newTool.tool_width);
+      textHeight.value = toolHeight.value = Number(newTool.tool_height);
       if (newTool.append_print != null) {
         toBase64(newTool.append_print.file, (dataUrl) => {
           if (dataUrl != "") {
@@ -370,7 +379,12 @@ const getUserId = (params) => {
   toolId.value = params.id;
 };
 
+// const textValue = ref(
+//   props.tool.append_print?.value != "" ? props.tool.append_print?.value : ""
+// );
 const textInput = (e, params) => {
+  activatedTool.value = false;
+  // textWidth.value = textWidth.value > 90 ? textWidth.value - 20 : textWidth.value
   const data = {
     append_print_id: params.append_print.id,
     document_upload_id: params.document_upload_id,
@@ -378,6 +392,7 @@ const textInput = (e, params) => {
     type: "Text",
     category: "Type",
     tool_width: textWidth.value.toString(),
+    tool_height: textHeight.value.toString(),
   };
   editTools({ id: params.id, payload: data });
 };
@@ -392,23 +407,42 @@ const remove = (params) => {
   emit("remove", params);
 };
 
-const textWidth = ref(60);
+const activatedTool = ref(false);
+const print = (params) => {
+  if (params == "Textarea") activatedTool.value = true;
+};
+
+const textWidth = ref(props.tool.tool_width);
+const textHeight = ref(24);
 const autoResize = {
-  minWidth: 60,
-  maxWidth: 900,
-  buffer: 0,
+  minWidth: 62,
+  maxWidth: 600,
+  buffer: 15,
 
   resize: function (el) {
     const test = document.createElement("pre");
     test.className = "input-test";
     test.innerHTML = el.value;
     el.parentNode.appendChild(test);
+
+    let numberOfLineBreaks = (el.value.match(/\n/g) || []).length;
+    // min - height + lines x line - height + padding + border
+    let newHeight = 10 + numberOfLineBreaks * 20 + 12 + 2;
+
     const calculatedWidth = Math.min(
       Math.max(test.offsetWidth + this.buffer, this.minWidth),
       this.maxWidth
     );
-    el.parentElement.style.width = el.style.width = calculatedWidth + "px";
+    el.parentElement.style.width = calculatedWidth + "px";
+    // el.style.width = calculatedWidth + "px";
     textWidth.value = calculatedWidth;
+    // const calculatedHeight = newHeight;
+    const calculatedHeight =
+      calculatedWidth < 600 ? newHeight : el.scrollHeight;
+    el.parentElement.style.height = calculatedHeight + "px";
+    // el.style.height = calculatedHeight + "px";
+    textHeight.value = calculatedHeight;
+
     el.parentNode.removeChild(test);
   },
 
@@ -456,24 +490,29 @@ onMounted(() => {
   display: inline;
   visibility: hidden;
 }
-input::-webkit-input-placeholder {
-  color: var(--placeholder-color);
-}
-
-input:-moz-placeholder {
-  color: var(--placeholder-color);
-}
-
-input::-moz-placeholder {
-  color: var(--placeholder-color);
-}
-
-input:-ms-input-placeholder {
-  color: var(--placeholder-color);
-}
 </style>
 
 <style scoped>
+textarea::-webkit-input-placeholder {
+  color: var(--placeholder-color);
+}
+
+textarea:-moz-placeholder {
+  color: var(--placeholder-color);
+}
+
+textarea::-moz-placeholder {
+  color: var(--placeholder-color);
+}
+
+textarea:-ms-input-placeholder {
+  color: var(--placeholder-color);
+}
+
+.tool-border {
+  outline: 1px solid #003bb3 !important;
+}
+
 .z-indexed {
   z-index: 1;
 }

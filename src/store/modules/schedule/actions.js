@@ -126,14 +126,11 @@ export const GenAgoraTokenAction = ({ commit }, payload) => {
         "agora",
         JSON.stringify(response.data.data)
       );
-      // window.sessionStorage.setItem(
-      //   "agora",
-      //   JSON.stringify(response.data.data)
-      // );
       return response;
     })
     .catch((error) => {
       if (error) sessionStorage.setItem("agora", null);
+      return false;
     });
 };
 

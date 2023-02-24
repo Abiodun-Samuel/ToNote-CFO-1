@@ -72,17 +72,33 @@
             Additional email (optional)
           </label>
         </div>
-        <div v-if="recipient" class="mb-3">
-          <label for="recipient_email" class="form-label"
-            >Recipient Email</label
-          >
-          <input
-            type="email"
-            class="form-control"
-            id="recipient_email"
-            placeholder="Recipient email"
-            v-model="recipient_email"
-          />
+        <div v-if="recipient" class="mb-2">
+          <div class="row">
+            <col-lg-6 class="col-md-6">
+              <label for="recipient_email" class="form-label"
+                >Recipient Name</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="recipient_name"
+                placeholder="Recipient name"
+                v-model="recipient_name"
+              />
+            </col-lg-6>
+            <col-lg-6 class="col-md-6">
+              <label for="recipient_email" class="form-label"
+                >Recipient Email</label
+              >
+              <input
+                type="email"
+                class="form-control"
+                id="recipient_email"
+                placeholder="Recipient email"
+                v-model="recipient_email"
+              />
+            </col-lg-6>
+          </div>
         </div>
         <div
           data-aos="fade-down"
@@ -255,6 +271,9 @@ const proceed = () => {
     notarySession.value === true
   ) {
     let UploadFormData = {
+      recipient_name: recipient_name.value,
+      recipient_contact: recipient_contact.value,
+      recipient_email: recipient_email.value,
       notary_id: schedule_formdata.value.notary,
       title: schedule_formdata.value.title,
       entry_point: notarySession.value === true ? "Notary" : "Affidavit",
@@ -297,6 +316,9 @@ const proceed = () => {
   }
   if (schedule_formdata.value.TemplateType == "Template") {
     let TemplateFormData = {
+      recipient_name: recipient_name.value,
+      recipient_contact: recipient_contact.value,
+      recipient_email: recipient_email.value,
       entry_point: notarySession.value === true ? "Notary" : "Affidavit",
       session_type:
         notarySession.value === true ? "notary_session" : "affidavit",
@@ -340,6 +362,9 @@ const proceed = () => {
   }
   if (schedule_formdata.value.TemplateType == "Custom") {
     let CustomFormData = {
+      recipient_name: recipient_name.value,
+      recipient_contact: recipient_contact.value,
+      recipient_email: recipient_email.value,
       entry_point: notarySession.value === true ? "Notary" : "Affidavit",
       session_type:
         notarySession.value === true ? "notary_session" : "affidavit",

@@ -816,8 +816,8 @@
         />
         <h3 class="fw-bolder text-primary">Session Ended</h3>
         <p>
-          Your session has ended, kindly click the button below to leave
-          the session
+          Your session has ended, kindly click the button below to leave the
+          session
         </p>
         <button @click="displayFeedback = true" class="btn btn-primary mt-1">
           Leave Session
@@ -1164,6 +1164,7 @@ onMounted(() => {
   socket.auth = {
     username: `${profile.value.first_name}-${profile.value.last_name}`,
     sessionRoom: `${virtual_session_details.value.id}`,
+    token: token.value,
   };
   socket.connect();
 
@@ -1184,6 +1185,7 @@ onMounted(() => {
   });
 
   socket.on(events.NOTARY_EDIT_TOOLS, (data) => {
+    console.log(JSON.parse(data));
     setTimeout(() => {
       store.commit("document/SET_EDIT_RESOURCE_TOOL", JSON.parse(data));
     }, 10);
@@ -1206,7 +1208,7 @@ onMounted(() => {
 
     notary_ava_interval.value = setInterval(() => {
       socket.emit(events.NOTARY_AVAILABLE, JSON.stringify(data));
-    }, 1000);
+    }, 0);
 
     //300000 milliseconds (5mins)
     // setTimeout(() => {

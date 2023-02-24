@@ -265,7 +265,7 @@
     </div>
   </div>
 
-  <ModalComp
+  <!-- <ModalComp
     :show="saveContinue"
     :footer="false"
     :size="'modal-sm'"
@@ -291,7 +291,7 @@
         Save and continue
       </button>
     </template>
-  </ModalComp>
+  </ModalComp> -->
 
   <ModalComp :show="emailModal" :footer="false" @close="emailModal = false">
     <template #header>
@@ -436,7 +436,7 @@ const audit = computed(() => {
 });
 
 const exportHTMLToPDF = async (params) => {
-  isDownload.value = true;
+  if (!params) isDownload.value = true;
   const pages = document.getElementsByClassName("downloader");
 
   const opt = {
@@ -496,21 +496,25 @@ const isDoneEdit = () => {
     files: doneDataUrl.value,
   };
   doneEditing(dataObj);
-  setTimeout(() => (saveContinue.value = isDownload.value = false), 3000);
 };
 
-const confirmSave = () => {
-  exportHTMLToPDF("done");
-};
+// const confirmSave = () => {
+//   exportHTMLToPDF("done");
+// };
 
 const createdAt = (dateParams) => {
   return moment(dateParams).format("MMM. Do, YYYY [at] h:mm:ss a");
 };
 
 const ipiFy = ref("");
-const saveContinue = ref(false);
+// const saveContinue = ref(false);
 onMounted(() => {
-  getUserDocument(userDocument.value.id);
+  getUserDocument(userDocument.value.id).then((value) => {
+    if (value) {
+      if (userDocument.value.is_the_owner_of_document)
+        setTimeout(() => exportHTMLToPDF("done"), 8000);
+    }
+  });
   // console.log(userDocument.value.documentUploads);
   redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
   redirectToNotaryDashboard.value = process.env.VUE_APP_URL_NOTARY_LIVE;
@@ -519,10 +523,6 @@ onMounted(() => {
   uri.value = route.currentRoute.value.query;
   video_url === undefined ? "" : (downloadLink.href = uri.value?.record_file);
   getDocumentAuditTrails(userDocument.value.id);
-
-  if (userDocument.value.is_the_owner_of_document) {
-    saveContinue.value = true;
-  }
 
   userDocument.value.documentUploads.filter((item) => {
     console.log(item);

@@ -34,7 +34,7 @@
         <div v-else>
           <!--=== verification===  -->
           <!-- v-if="!userProfile?.national_verification" -->
-          <!-- <div
+          <div
             v-if="!userProfile?.national_verification"
             class="alert alert-danger p-1 text-center my-1"
             role="alert"
@@ -48,8 +48,7 @@
             >
               Verify
             </button>
-          </div> -->
-
+          </div>
           <!-- === for inactive session === -->
 
           <!-- === immediate session===  -->
@@ -289,15 +288,14 @@ import SkeletonLoader from "@/components/Loader/SkeletonLoader.vue";
 import PreLoader from "@/components/Loader/PreLoader.vue";
 import moment from "moment";
 import { Icon } from "@iconify/vue";
-import { useStore } from "vuex";
-import { ref, onMounted, onUnmounted, onBeforeMount } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import ModalComp from "@/components/ModalComp.vue";
 import VerificationComponent from "@/components/Auth/VerificationComponent.vue";
 import AgoraPlayer from "@/components/Video/PrePlayer/AgoraPlayer.vue";
 import { useToast } from "vue-toast-notification";
 import socket from "@/utils/event-bus";
-import { useGetters } from "vuex-composition-helpers/dist";
+import { useActions, useGetters } from "vuex-composition-helpers/dist";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import { events } from "@/utils/constants";
 
@@ -328,7 +326,6 @@ const start = async () => {
 
 const router = useRouter();
 const route = useRoute();
-const store = useStore();
 
 const virtual_session_loader = ref(true);
 const sessionReady = ref(false);
@@ -343,17 +340,18 @@ const notary_details = ref({
   name: "",
 });
 
-const {
-  userProfile,
-  is_notary,
-  virtual_session_details,
-  // virtual_session_loader,
-} = useGetters({
+const { userProfile, is_notary, virtual_session_details, token } = useGetters({
   userProfile: "auth/profile",
   is_notary: "auth/is_notary",
   virtual_session_details: "schedule/virtual_session_details",
-  // virtual_session_loader: "schedule/session_details_loading",
+  token: "auth/token",
 });
+
+const { sessionDetails, agoraToken } = useActions({
+  sessionDetails: "schedule/VirtualSessionDetailsAction",
+  agoraToken: "schedule/GenAgoraTokenAction",
+});
+
 const proceedToSession = () => {
   if (
     mediaDevicesReady.value &&
@@ -368,14 +366,7 @@ const proceedToSession = () => {
       },
     });
   } else {
-    // return null;
-    router.push({
-      name: "document.edit",
-      params: {
-        document_id: virtual_session_details.value?.schedule_id,
-        session_id: virtual_session_details.value.id,
-      },
-    });
+    return null;
   }
 };
 
@@ -388,53 +379,53 @@ const checkdate = (date) => {
   let sessionDate = moment(date);
   let nowDate = moment();
   if (nowDate > sessionDate) {
-    console.log("session ready");
     sessionReady.value = true;
   } else {
-    console.log("awaiting session");
+    sessionReady.value = false;
   }
 };
 
-onBeforeMount(() => {
-  store
-    .dispatch("schedule/VirtualSessionDetailsAction", route.params.session_id)
-    .then(() => {
-      if (
-        moment() >
-        moment(
-          virtual_session_details.value?.date +
-            " " +
-            virtual_session_details.value?.start_time
-        )
-      ) {
-        sessionReady.value = true;
-      }
-      checkTimeInterval.value = setInterval(() => {
-        checkdate(
-          virtual_session_details.value?.date +
-            " " +
-            virtual_session_details.value?.start_time
-        );
-      }, 1000);
-      virtual_session_loader.value = false;
-      socket.auth = {
-        username: `${userProfile.value.first_name}-${userProfile.value.last_name}`,
-        sessionRoom: `${virtual_session_details.value?.id}`,
-      };
-      socket.connect();
+onMounted(() => {
+  sessionDetails(route.params.session_id).then(() => {
+    if (
+      moment() >
+      moment(
+        virtual_session_details.value?.date +
+          " " +
+          virtual_session_details.value?.start_time
+      )
+    ) {
+      sessionReady.value = true;
+    }
+    checkTimeInterval.value = setInterval(() => {
+      checkdate(
+        virtual_session_details.value?.date +
+          " " +
+          virtual_session_details.value?.start_time
+      );
+    }, 1000);
+    socket.auth = {
+      username: `${userProfile.value.first_name}-${userProfile.value.last_name}`,
+      sessionRoom: `${virtual_session_details.value?.id}`,
+      token: token.value,
+    };
+    socket.connect();
 
-      user_from_doc.value =
-        virtual_session_details.value?.schedule.participants.find((user) => {
-          return user.user_id == userProfile.value?.id;
-        });
-
-      store.dispatch("schedule/GenAgoraTokenAction", {
-        channel_name: route.params.session_id,
-        user_id: `${userProfile.value.first_name}-${user_from_doc.value?.role}-${userProfile.value.initials}`,
-        role: "Publisher",
+    user_from_doc.value =
+      virtual_session_details.value?.schedule.participants.find((user) => {
+        return user.user_id == userProfile.value?.id;
       });
+
+    agoraToken({
+      channel_name: route.params.session_id,
+      user_id: `${userProfile.value.first_name}-${user_from_doc.value?.role}-${userProfile.value.initials}`,
+      role: "Publisher",
+    }).then((value) => {
+      if (value) virtual_session_loader.value = false;
     });
+  });
 });
+
 onMounted(() => {
   start();
   socket.on(events.JOIN_ROOM_MESSAGE, (data) => {

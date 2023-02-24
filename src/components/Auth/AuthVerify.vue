@@ -37,7 +37,7 @@
                         justify-content-between
                       "
                     >
-                      <v-otp-input
+                      <VOtpInput
                         ref="otpInput"
                         input-classes="form-control auth-input height-50 text-center numeral-mask mx-25 mb-1"
                         separator=" "
