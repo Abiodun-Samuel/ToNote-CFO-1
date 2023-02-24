@@ -11,9 +11,7 @@
     v-model:y="y"
     :parent="true"
     :draggable="
-      comp == 'audit'
-        ? false
-        : profile.id == tool.user_id || owner.isOwner == true
+      comp == 'audit' ? false : profile.id == tool.user_id || is_notary
     "
     :resizable="false"
     @drag-end="dragEnd($event, tool)"
@@ -51,11 +49,7 @@
     </div>
 
     <template
-      v-if="
-        comp == 'audit'
-          ? false
-          : profile.id == tool.user_id || owner.isOwner == true
-      "
+      v-if="comp == 'audit' ? false : profile.id == tool.user_id || is_notary"
     >
       <span class="drag-me">
         <span title="Drag" class="btn btn-xs btn-secondary rounded-0 movement">
@@ -63,6 +57,7 @@
         </span>
 
         <span
+          v-if="is_notary"
           title="Remove"
           class="btn btn-xs btn-secondary rounded-0 remove"
           @click="remove({ toolId: tool.id })"
@@ -91,14 +86,10 @@
     @resize-end="resizeEnd($event, tool)"
     @activated="print(tool.tool_name)"
     :draggable="
-      comp == 'audit'
-        ? false
-        : profile.id == tool.user_id || owner.isOwner == true
+      comp == 'audit' ? false : profile.id == tool.user_id || is_notary
     "
     :resizable="
-      comp == 'audit'
-        ? false
-        : profile.id == tool.user_id || owner.isOwner == true
+      comp == 'audit' ? false : profile.id == tool.user_id || is_notary
     "
     :class="[
       tool.tool_name == 'Textarea' ? 'text-wrapper z-indexed' : 'image-area',
@@ -152,11 +143,7 @@
     </template>
 
     <template
-      v-if="
-        comp == 'audit'
-          ? false
-          : profile.id == tool.user_id || owner.isOwner == true
-      "
+      v-if="comp == 'audit' ? false : profile.id == tool.user_id || is_notary"
     >
       <span class="drag-me">
         <span title="Drag" class="btn btn-xs btn-secondary rounded-0 movement">
@@ -173,6 +160,7 @@
         </span>
 
         <span
+          v-if="is_notary"
           title="Remove"
           class="btn btn-xs btn-secondary rounded-0 remove"
           @click="remove({ printId: tool.append_print.id, toolId: tool.id })"
@@ -305,9 +293,10 @@ const { toBase64 } = useConvertToBase64Composable();
 const toast = useToast();
 const props = defineProps({ tool: Object, owner: Object, comp: String });
 
-const { profile, isToolLoading } = useGetters({
+const { profile, isToolLoading, is_notary } = useGetters({
   profile: "auth/profile",
   isToolLoading: "document/isToolLoading",
+  is_notary: "auth/is_notary",
 });
 
 const { editTools } = useActions({
