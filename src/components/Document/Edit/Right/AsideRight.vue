@@ -182,12 +182,7 @@
             <button
               v-if="userDocument.is_the_owner_of_document === true"
               type="submit"
-              class="
-                btn btn-sm btn-primary
-                waves-effect waves-float waves-light
-                d-block
-                ms-auto
-              "
+              class="btn btn-sm btn-primary waves-effect waves-float waves-light d-block ms-auto"
             >
               Update
             </button>

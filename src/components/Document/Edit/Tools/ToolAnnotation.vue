@@ -35,14 +35,7 @@
       </div>
       <div
         v-else
-        class="
-          bg-fill
-          w-100
-          h-100
-          d-flex
-          justify-content-center
-          align-items-center
-        "
+        class="bg-fill w-100 h-100 d-flex justify-content-center align-items-center"
       >
         {{ tool.tool_name }}
       </div>
@@ -140,6 +133,15 @@
             : '',
         ]"
       />
+      <div
+        class="d-block mb-4"
+        v-if="tool.tool_name == 'Seal'"
+        style="white-space: nowrap"
+      >
+        <p style="color: #000 !important" class="fw-bolder">
+          {{ userDocument?.id }}
+        </p>
+      </div>
     </template>
 
     <template
@@ -158,7 +160,6 @@
         >
           <EditIcon />
         </span>
-
         <span
           v-if="is_notary"
           title="Remove"
@@ -293,10 +294,11 @@ const { toBase64 } = useConvertToBase64Composable();
 const toast = useToast();
 const props = defineProps({ tool: Object, owner: Object, comp: String });
 
-const { profile, isToolLoading, is_notary } = useGetters({
+const { profile, isToolLoading, is_notary, userDocument } = useGetters({
   profile: "auth/profile",
   isToolLoading: "document/isToolLoading",
   is_notary: "auth/is_notary",
+  userDocument: "document/userDocument",
 });
 
 const { editTools } = useActions({
