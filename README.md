@@ -1,4 +1,4 @@
-# tonote-doc-edit
+# ToNote CFO System
 
 ## Project setup
 ```
