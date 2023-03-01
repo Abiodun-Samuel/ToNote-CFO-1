@@ -270,13 +270,7 @@
                     <button
                       @click="handleNotaryDetails(notary.id)"
                       type="button"
-                      class="
-                        btn btn-sm
-                        dropdown-toggle
-                        hide-arrow
-                        py-0
-                        waves-effect waves-float waves-light
-                      "
+                      class="btn btn-sm dropdown-toggle hide-arrow py-0 waves-effect waves-float waves-light"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
                     >

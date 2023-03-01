@@ -137,11 +137,7 @@
         class="d-block mb-4"
         v-if="tool.tool_name == 'Seal'"
         style="white-space: nowrap"
-      >
-        <p style="color: #000 !important" class="fw-bolder">
-          Doc Id: {{ userDocument?.id }}
-        </p>
-      </div>
+      ></div>
     </template>
 
     <template
@@ -294,11 +290,10 @@ const { toBase64 } = useConvertToBase64Composable();
 const toast = useToast();
 const props = defineProps({ tool: Object, owner: Object, comp: String });
 
-const { profile, isToolLoading, is_notary, userDocument } = useGetters({
+const { profile, isToolLoading, is_notary } = useGetters({
   profile: "auth/profile",
   isToolLoading: "document/isToolLoading",
   is_notary: "auth/is_notary",
-  userDocument: "document/userDocument",
 });
 
 const { editTools } = useActions({

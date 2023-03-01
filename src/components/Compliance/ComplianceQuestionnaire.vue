@@ -22,6 +22,7 @@
               {{
                 participant.user.first_name + " " + participant.user.last_name
               }}
+              ({{ participant.role }})
             </button>
           </h2>
           <div

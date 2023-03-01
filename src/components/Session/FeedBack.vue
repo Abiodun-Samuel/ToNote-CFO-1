@@ -72,7 +72,6 @@ import { useActions, useGetters } from "vuex-composition-helpers/dist";
 import { useToast } from "vue-toast-notification";
 
 const toast = useToast();
-
 const rating = ref(null);
 const comment = ref(null);
 
@@ -82,11 +81,13 @@ const { getUserDocument, notaryFeedbackAction } = useActions({
   notaryFeedbackAction: "notary/notaryFeedbackAction",
 });
 
-const { feedback_loading, virtual_session_details, userDocument } = useGetters({
-  feedback_loading: "notary/feedback_loading",
-  virtual_session_details: "schedule/virtual_session_details",
-  userDocument: "document/userDocument",
-});
+const { feedback_loading, virtual_session_details, userDocument, token } =
+  useGetters({
+    feedback_loading: "notary/feedback_loading",
+    virtual_session_details: "schedule/virtual_session_details",
+    userDocument: "document/userDocument",
+    token: "auth/token",
+  });
 
 const submit = () => {
   notaryFeedbackAction({
@@ -107,7 +108,8 @@ const submit = () => {
       }
     );
     if (!userDocument.value.is_the_owner_of_document)
-      return (window.location.href = process.env.VUE_APP_URL_AUTH_LIVE);
+      return (window.location.href =
+        process.env.VUE_APP_URL_AUTH_LIVE + "/redirecting?qt=" + token.value);
 
     if (userDocument.value.extra_seals >= 1) {
       window.location.href = "/session-payment";

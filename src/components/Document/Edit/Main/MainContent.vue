@@ -46,6 +46,7 @@
                       </div>
                     </template>
                   </template>
+                  <p class="fw-bolder">Document Id: {{ theDoc.id }}</p>
                 </RenderPage>
                 <!-- <RenderPage
                   v-for="doc in sortedFile"
