@@ -7,4 +7,5 @@ export default {
   loader: false,
   errors: [],
   login_loader: false,
+  verify_loader: false,
 };

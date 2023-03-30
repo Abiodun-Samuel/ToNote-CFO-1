@@ -15,7 +15,7 @@
             <div class="card mb-0">
               <div class="card-body">
                 <div class="brand-logo">
-                  <img src="@/assets/images/logo-dark.png" alt="" height="26" />
+                  <img src="@/assets/images/logo-dark.png" alt="" height="60" />
                 </div>
                 <template v-if="hasAccount == false">
                   <h2 class="card-title fw-bolder mb-1">
@@ -30,14 +30,9 @@
                     >
 
                     <div
-                      class="
-                        auth-input-wrapper
-                        d-flex
-                        align-items-center
-                        justify-content-between
-                      "
+                      class="auth-input-wrapper d-flex align-items-center justify-content-between"
                     >
-                      <VOtpInput
+                      <v-otp-input
                         ref="otpInput"
                         input-classes="form-control auth-input height-50 text-center numeral-mask mx-25 mb-1"
                         separator=" "
@@ -49,11 +44,11 @@
                       />
                     </div>
 
-                    <a
+                    <span
                       role="button"
                       class="d-block text-decoration-underline mb-1"
                       @click="clearInput()"
-                      >Clear</a
+                      >Clear</span
                     >
                     <button
                       @click="verifyAccessWithPassword"
@@ -62,6 +57,10 @@
                       tabindex="4"
                       :disabled="disabled"
                     >
+                      <span
+                        v-show="verify_loader"
+                        class="spinner-border spinner-border-sm"
+                      ></span>
                       Verify
                     </button>
                   </form>
@@ -95,7 +94,25 @@
                       </label>
                     </div>
 
-                    <div class="form-group">
+                    <div class="input-group mb-3">
+                      <input
+                        :type="inputType"
+                        class="form-control"
+                        placeholder="Enter password"
+                        aria-label="Username"
+                        aria-describedby="basic-addon1"
+                        v-model="otpPassword"
+                      />
+                      <span
+                        @click="switchType"
+                        role="button"
+                        class="input-group-text"
+                        id="basic-addon1"
+                      >
+                        <Icon :icon="iconType" height="18" />
+                      </span>
+                    </div>
+                    <!-- <div class="form-group">
                       <input
                         type="password"
                         v-model="otpPassword"
@@ -103,13 +120,17 @@
                         id="security"
                         placeholder="Enter password"
                       />
-                    </div>
+                    </div> -->
                     <button
                       type="submit"
                       class="btn btn-primary w-100"
                       tabindex="4"
                       :disabled="!otpPassword"
                     >
+                      <span
+                        v-show="verify_loader"
+                        class="spinner-border spinner-border-sm"
+                      ></span>
                       Sign in
                     </button>
                   </form>
@@ -125,22 +146,35 @@
 
 <script setup>
 import PreLoader from "@/components/Loader/PreLoader.vue";
-import store from "@/store";
 import VOtpInput from "vue3-otp-input";
 import Api from "@/api/Api";
 import { ref, onMounted, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
+import { Icon } from "@iconify/vue";
+import { useGetters, useActions } from "vuex-composition-helpers/dist";
+
+const { verify_loader } = useGetters({
+  verify_loader: "auth/verify_loader",
+});
+
+const { verifyUserByPassword, userResendVerifyOTP } = useActions({
+  verifyUserByPassword: "auth/verifyUserByPassword",
+  userResendVerifyOTP: "auth/userResendVerifyOTP",
+});
 
 const route = useRoute();
 // const router = useRouter();
 const disabled = ref(true);
-const forgotPassword = ref(true);
+const forgotPassword = ref("");
 const otpPassword = ref(null);
 const hasAccount = ref(false);
 const flag = ref(null);
 const documentId = ref(null);
 const email = ref(null);
 const loading = ref(false);
+const otpInput = ref();
+const inputType = ref("password");
+const iconType = ref("mdi:eye-off-outline");
 
 const verifyAccessWithPassword = () => {
   let formData = {
@@ -148,9 +182,15 @@ const verifyAccessWithPassword = () => {
     password: otpPassword.value,
     session_id: documentId.value,
   };
-  store.dispatch("auth/verifyUserByPassword", formData);
+  verifyUserByPassword(formData);
 };
-
+const switchType = () => {
+  iconType.value =
+    iconType.value == "mdi:eye-off-outline"
+      ? "mdi:eye-outline"
+      : "mdi:eye-off-outline";
+  inputType.value = inputType.value == "password" ? "text" : "password";
+};
 const handleOnComplete = (value) => {
   disabled.value = false;
   otpPassword.value = value;
@@ -161,7 +201,11 @@ const resendToken = () => {
     email: email.value,
     session_id: documentId.value,
   };
-  store.dispatch("auth/sessionResendVerifyOTP", formData);
+  userResendVerifyOTP(formData);
+};
+
+const clearInput = () => {
+  otpInput.value.clearInput();
 };
 
 onBeforeMount(() => {
@@ -172,7 +216,6 @@ onBeforeMount(() => {
   Api.get(
     process.env.VUE_APP_API_LIVE + "document-user-check/" + email.value
   ).then((response) => {
-    console.log(response.data.data.message);
     hasAccount.value = response.data.data.message;
     loading.value = false;
   });
@@ -205,21 +248,18 @@ onMounted(() => {});
 //    console.log("onchanged");
 //  },
 
-//  clearInput() {
-//    this.$refs.otpInput.clearInput();
-//  },
 //  if (store.state.authStore.isAuthenticated) {
 //    router.push({
 //      path: `/await-notary-session/${this.$route.query.di}`,
 //    });
 //  }
-//  if (!this.$route.query.e && !this.$route.query.di && !this.$route.query.f) {
-//    this.$toast.error("Unauthorized");
-//  }
-// forgotPassword.value =
-//     process.env.NODE_ENV != "development"
-//       ? process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LIVE
-//       : process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LOCAL;
+// if (!this.$route.query.e && !this.$route.query.di && !this.$route.query.f) {
+//   this.$toast.error("Unauthorized");
+// }
+forgotPassword.value =
+  process.env.NODE_ENV != "development"
+    ? process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LIVE
+    : process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LOCAL;
 </script>
 
 <style lang="css" scoped>

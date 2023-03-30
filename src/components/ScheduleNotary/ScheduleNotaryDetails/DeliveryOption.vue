@@ -5,7 +5,7 @@
     </h5>
 
     <div class="d-flex gap-3 my-2">
-      <div class="form-check form-check-inline">
+      <!-- <div class="form-check form-check-inline">
         <input
           class="form-check-input"
           type="radio"
@@ -15,7 +15,7 @@
           value="Collection"
         />
         <label class="form-check-label" for="inlineRadio1">Collection</label>
-      </div>
+      </div> -->
       <div class="form-check form-check-inline">
         <input
           class="form-check-input"
@@ -114,35 +114,71 @@
       </template>
       <template v-if="deliveryOption == 'Address'">
         <div data-aos="fade-down" class="mb-1">
-          <div class="my-1">
-            <label for="recipient_name" class="form-label">Name</label>
-            <input
-              type="text"
-              v-model="recipient_name"
-              class="form-control"
-              id="recipient_name"
-              placeholder="Enter recipient's name"
-            />
+          <div class="row">
+            <div class="my-1 col-lg-6 col-md-6">
+              <label for="recipient_name" class="form-label">Name</label>
+              <input
+                type="text"
+                v-model="recipient_name"
+                class="form-control"
+                id="recipient_name"
+                placeholder="Enter recipient's name"
+              />
+            </div>
+            <div class="my-1 col-lg-6 col-md-6">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input
+                type="tel"
+                v-model="recipient_contact"
+                class="form-control"
+                id="phone"
+                placeholder="Enter recipient's contact"
+              />
+            </div>
           </div>
-          <div class="my-1">
-            <label for="phone" class="form-label">Contact</label>
-            <input
-              type="tel"
-              v-model="recipient_contact"
-              class="form-control"
-              id="phone"
-              placeholder="Enter recipient's contact"
-            />
+          <div class="row">
+            <div class="my-1 col-lg-6 col-md-6">
+              <label for="address" class="form-label">Address Line 1</label>
+              <input
+                type="text"
+                v-model="address_one"
+                class="form-control"
+                id="address"
+                placeholder="Enter your recipient's address"
+              />
+            </div>
+            <div class="my-1 col-lg-6 col-md-6">
+              <label for="address" class="form-label">Address Line 2</label>
+              <input
+                type="text"
+                v-model="address_two"
+                class="form-control"
+                id="address"
+                placeholder="Enter your recipient's address"
+              />
+            </div>
           </div>
-          <div class="my-1">
-            <label for="address" class="form-label">Address</label>
-            <input
-              type="text"
-              v-model="address"
-              class="form-control"
-              id="address"
-              placeholder="Enter your recipient's address"
-            />
+          <div class="row">
+            <div class="my-1 col-lg-6 col-md-6">
+              <label for="address" class="form-label">State</label>
+              <input
+                type="text"
+                v-model="state"
+                class="form-control"
+                id="address"
+                placeholder="Enter your recipient's state"
+              />
+            </div>
+            <div class="my-1 col-lg-6 col-md-6">
+              <label for="address" class="form-label">Country</label>
+              <input
+                type="text"
+                v-model="country"
+                class="form-control"
+                id="address"
+                placeholder="Enter your recipient's country"
+              />
+            </div>
           </div>
         </div>
         <hr />
@@ -192,7 +228,7 @@
 
 <script setup>
 // import store from "@/store";
-import { ref, defineEmits, onMounted } from "vue";
+import { ref, defineEmits, onMounted, computed } from "vue";
 import { platformInitiated } from "@/utils/helper";
 import moment from "moment";
 import { type } from "@/utils/constants";
@@ -210,13 +246,20 @@ const route = useRoute();
 const emit = defineEmits(["current"]);
 const deliveryOption = ref("");
 const openPaymentModal = ref(false);
-const address = ref("");
+// const address = ref("");
 const recipient_name = ref("");
 const recipient_contact = ref("");
 const recipient_email = ref("");
 const recipient = ref(false);
+const address_one = ref("");
+const address_two = ref("");
+const state = ref("");
+const country = ref("");
 // const openPaymentFailedModal = ref(false);
 // const transactions_status = ref(false);
+const address = computed(() => {
+  return `${address_one.value}' '${address_two.value} ', '${state.value} ', '${country.value}`;
+});
 const step = ref(3);
 const notarySession = ref(false);
 
@@ -288,6 +331,8 @@ const proceed = () => {
         schedule_formdata.value.schedule_type == type.Immediate ? true : false,
       request_type: type.Upload,
       delivery_channel: deliveryOption.value,
+      delivery_email:
+        deliveryOption.value == "Email" ? userProfile.value.email : "",
       delivery_address: !address.value ? "Address" : address.value,
       platform_initiated: platformInitiated(),
       actor_type: !userProfile.value.is_business ? "User" : "Team",
@@ -333,6 +378,8 @@ const proceed = () => {
         schedule_formdata.value.schedule_type == type.Immediate ? true : false,
       request_type: type.Template,
       delivery_channel: deliveryOption.value,
+      delivery_email:
+        deliveryOption.value == "Email" ? userProfile.value.email : "",
       delivery_address: !address.value ? "Address" : address.value,
       platform_initiated: platformInitiated(),
       actor_type: !userProfile.value.is_business ? "User" : "Team",
@@ -376,6 +423,8 @@ const proceed = () => {
         schedule_formdata.value.schedule_type == type.Immediate ? true : false,
       request_type: type.Custom,
       delivery_channel: deliveryOption.value,
+      delivery_email:
+        deliveryOption.value == "Email" ? userProfile.value.email : "",
       delivery_address: !address.value ? "Address" : address.value,
       platform_initiated: platformInitiated(),
       actor_type: !userProfile.value.is_business ? "User" : "Team",

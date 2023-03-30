@@ -9,9 +9,12 @@
           :key="participant.id"
           class="accordion-item"
         >
-          <h2 class="accordion-header" :id="`flush-heading${index}`">
-            <button
-              class="accordion-button collapsed d-flex gap-1 fw-bolder"
+          <h2
+            class="accordion-header bg-brown text-black"
+            :id="`flush-heading${index}`"
+          >
+            <div
+              class="accordion-button collapsed d-flex gap-1 fw-bolder bg-brown text-black"
               type="button"
               data-bs-toggle="collapse"
               :data-bs-target="`#flush-collapse${index}`"
@@ -23,7 +26,7 @@
                 participant.user.first_name + " " + participant.user.last_name
               }}
               ({{ participant.role }})
-            </button>
+            </div>
           </h2>
           <div
             :id="`flush-collapse${index}`"
@@ -38,7 +41,7 @@
                     width="100"
                     height="100"
                     src="../../assets/images/avatar.png"
-                    alt=""
+                    alt="lagos state judiciary"
                   />
                 </div>
                 <div>
@@ -526,11 +529,17 @@ const submit = () => {
 </script>
 
 <style lang="css">
+.bg-brown {
+  background: #d9c088 !important;
+}
+/* .accordion-button:hover {
+  background: ;
+} */
 .compliance__number {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1.5px solid #003bb3;
+  border: 1.5px solid #766458;
   height: 30px;
   width: 30px;
   border-radius: 50%;

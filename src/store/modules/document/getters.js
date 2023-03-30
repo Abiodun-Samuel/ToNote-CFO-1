@@ -74,3 +74,6 @@ export const completedDoc = (state) => {
 export const session_complete = (state) => {
   return state.session_complete;
 };
+export const shareDocLoader = (state) => {
+  return state.shareDocLoader;
+};

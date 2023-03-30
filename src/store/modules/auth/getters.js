@@ -2,6 +2,10 @@ export const token = (state) => {
   return state.token;
 };
 
+export const verify_loader = (state) => {
+  return state.verify_loader;
+};
+
 export const profile = (state) => {
   return state.profile;
 };

@@ -16,7 +16,6 @@
           style="padding: 0 1px 1px 0"
         />
       </template>
-
       <pdf
         v-else
         :src="file"
@@ -28,6 +27,9 @@
         :resize="false"
         class="mb-1"
       />
+      <!-- <p class="fw-bolder text-center" style="z-index: 1000">
+        Document Id: {{ docId }}
+      </p> -->
     </div>
   </div>
 </template>
@@ -50,7 +52,7 @@ export default {
     pdf: pdfvuer,
     PreLoader,
   },
-  props: ["file", "comp"],
+  props: ["file", "comp", "docId"],
   data() {
     return {
       page: 1,

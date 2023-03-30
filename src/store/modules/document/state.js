@@ -19,6 +19,6 @@ export default {
   completedDoc: null,
   audit_trails: [],
   audit_trails_loader: false,
-
   session_complete: false,
+  shareDocLoader: false,
 };

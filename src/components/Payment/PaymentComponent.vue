@@ -160,7 +160,7 @@ export default {
       return store.getters["schedule/payment_gateways"];
     },
     reference() {
-      return store.getters["transactions/schedule_transaction_id"];
+      return store.getters["schedule/transactionId"];
     },
   },
 
@@ -222,7 +222,7 @@ export default {
 <style>
 .price__display {
   border-radius: 5px;
-  border: 1px solid #003bb3;
+  border: 1px solid #766458;
 }
 
 .payment__options {
@@ -288,20 +288,20 @@ export default {
   position: absolute;
   height: 8px;
   width: 8px;
-  background: #003bb3;
+  background: #766458;
   right: 5px;
   top: 5px;
   border-radius: 100%;
   border: 3px solid #fff;
-  -webkit-box-shadow: 0px 0px 0px 2px #003bb3;
-  box-shadow: 0px 0px 0px 2px #003bb3;
+  -webkit-box-shadow: 0px 0px 0px 2px #766458;
+  box-shadow: 0px 0px 0px 2px #766458;
 }
 
 .payment__options
   .payment__option
   input[type="radio"]:checked
   + .payment__option-content {
-  border: 2px solid #003bb3;
+  border: 2px solid #766458;
   background: #eaf1fe;
   -webkit-transition: ease-in 0.3s;
   -o-transition: ease-in 0.3s;

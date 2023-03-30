@@ -26,12 +26,7 @@
         <button
           @click="openPreviewModal = true"
           :disabled="!source"
-          class="
-            btn btn-primary
-            d-flex
-            align-items-center
-            justify-content-center
-          "
+          class="btn btn-primary d-flex align-items-center justify-content-center"
         >
           Preview
           <Icon icon="akar-icons:enlarge" class="ms-1" />
@@ -42,7 +37,7 @@
     <!-- template preview modal  -->
     <ModalComp
       :show="openPreviewModal"
-      :size="'modal-md'"
+      :size="'modal-lg'"
       @close="openPreviewModal = false"
     >
       <template #header>

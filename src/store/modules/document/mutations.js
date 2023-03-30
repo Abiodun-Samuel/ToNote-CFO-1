@@ -89,3 +89,6 @@ export const SET_COMPLETED_DOCUMENT = (state, payload) => {
 export const SET_SESSION_COMPLETE = (state, payload) => {
   state.session_complete = payload;
 };
+export const SHARE_DOC_LOADER = (state, payload) => {
+  state.shareDocLoader = payload;
+};

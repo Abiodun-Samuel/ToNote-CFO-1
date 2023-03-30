@@ -7,7 +7,7 @@ html body {
 }
 
 .text-primary {
-  color: #003bb3 !important;
+  color: #766458 !important;
 }
 
 .vue-simple-handler {
@@ -21,17 +21,18 @@ html body {
 .vue-advanced-cropper__background,
 .vue-advanced-cropper__foreground {
   background: #f5f5f5f5 !important;
-  box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+  box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px,
+    rgba(17, 17, 26, 0.1) 0px 0px 8px;
 }
 
 /* ***... DraggableResizable ... */
 .active-class {
-  border: 1px solid #003bb3 !important;
+  border: 1px solid #766458 !important;
 }
 
 .handle-class {
-  background: #003bb3 !important;
-  border: 1px solid #003bb3 !important;
+  background: #766458 !important;
+  border: 1px solid #766458 !important;
   border-radius: 50%;
 }
 

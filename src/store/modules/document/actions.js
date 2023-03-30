@@ -91,6 +91,26 @@ export const fileUploads = ({ commit }, formData) => {
       });
     });
 };
+export const shareDocument = ({ commit }, formData) => {
+  commit("SHARE_DOC_LOADER", true);
+  Document.shareDoc(formData[0]?.document_id, formData)
+    .then((response) => {
+      commit("SHARE_DOC_LOADER", false);
+      console.log(response.data);
+      toast.success(`Document has been shared successfully`, {
+        timeout: 5000,
+        position: "top-right",
+      });
+    })
+    .catch((error) => {
+      commit("SHARE_DOC_LOADER", false);
+      console.log(error);
+      toast.error(`${error.response.data.data.error}`, {
+        timeout: 5000,
+        position: "top-right",
+      });
+    });
+};
 
 export const removeRecentUpload = ({ commit }) => commit("SET_CANCEL", false);
 
@@ -209,12 +229,15 @@ export const isGuest = ({ commit }, formData) => {
 export const doneEditing = ({ commit }, formData) => {
   commit("SET_DONE_LOADER", true);
   // Document.storeUploadConvert(formData)
-  return Document.participantDone(formData)
+  // return Document.participantDone(formData)
+  return Document.completedDoc(formData)
     .then((response) => {
       commit("SET_DONE_LOADER", false);
       commit("SET_DOCUMENT_DONE", response.data.data);
       commit("SET_SESSION_COMPLETE", true);
       commit("SET_COMPLETED_DOCUMENT", response.data.data);
+      // route.push({ path: "/session-complete" });
+      window.location.href = "/session-complete";
       return true;
 
       // toast.success("Document sent successfully", {
@@ -386,7 +409,7 @@ export const removeTool = ({ commit, getters }, formData) => {
 
 export const getDocumentAuditTrails = ({ commit }, docId) => {
   commit("SET_AUDIT_TRAILS_LOADER", true);
-  Document.getDocumentAuditTrails(docId)
+  return Document.getDocumentAuditTrails(docId)
     .then((response) => {
       commit("SET_AUDIT_TRAILS", response.data.data);
       commit("SET_AUDIT_TRAILS_LOADER", false);

@@ -23,7 +23,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #003bb3;
+  background: #766458;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 

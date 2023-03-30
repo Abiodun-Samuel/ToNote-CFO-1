@@ -161,7 +161,7 @@ const updateCanvas = function (
 ) {
   const canvas = document.getElementById("canvas1"),
     ctx = canvas.getContext("2d");
-  ctx.font = "normal " + fontSize + " verdana ";
+  ctx.font = "bold " + fontSize + " verdana ";
   ctx.beginPath();
   ctx.arc(155, 155, r, 0, Math.pow(r, 2), false);
   ctx.fillStyle = color;
@@ -257,7 +257,7 @@ watch(
 
     // updateCanvas(newCnv, 150, 150, 110, space, 1, "1.3em", sealColor.value);
     // updateCanvas(newCnv2, 149, 157, 107, space, 0, "1em", sealColor.value);
-    updateCanvas(newCnv2, 159, 165, 139, space, 0, "1em", sealColor.value);
+    updateCanvas(newCnv2, 159, 155, 139, space, 0, "1em", sealColor.value);
 
     if (newCnv != oldCnv)
       if (newCnv2 != oldCnv2)
@@ -283,7 +283,7 @@ onMounted(() => {
 
   // updateCanvas(name, 150, 150, 110, space, 1, "1.3em", sealColor.value);
   //original updateCanvas(address, 149, 157, 107, space, 0, "1em", sealColor.value);
-  updateCanvas(address, 159, 165, 139, space, 0, "1em", sealColor.value);
+  updateCanvas(address, 159, 155, 139, space, 0, "1em", sealColor.value);
 });
 </script>
 

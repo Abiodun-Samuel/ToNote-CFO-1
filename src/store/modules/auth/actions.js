@@ -150,6 +150,7 @@ export const loginFromDashboard = ({ commit }, token) => {
   commit("SET_LOGIN_LOADER", true);
   commit("SET_TOKEN", token);
   commit("SET_TOKEN_TYPE", "Bearer");
+
   User.show()
     .then((response) => {
       commit("SET_USER_PROFILE", response.data.data);
@@ -193,7 +194,9 @@ export const loginUser = ({ commit }, formData) => {
     });
 };
 
-export const verifyUserByPassword = ({ commit }, formData) => {
+export const verifyUserByPassword = ({ commit, state }, formData) => {
+  commit("SET_VERIFY_LOADER", true);
+
   User.ScheduleSessionVerifyApi(formData)
     .then((response) => {
       commit("SET_TOKEN", response.data.token);
@@ -201,9 +204,12 @@ export const verifyUserByPassword = ({ commit }, formData) => {
 
       return User.show().then((response) => {
         commit("SET_USER_PROFILE", response.data.data);
+        commit("SET_VERIFY_LOADER", false);
+
         router.push({
           name: "session-prep",
           params: { session_id: formData.session_id },
+          query: { token: state.token },
         });
         toast.success("Welcome to ToNote ", {
           timeout: 5000,
@@ -212,6 +218,8 @@ export const verifyUserByPassword = ({ commit }, formData) => {
       });
     })
     .catch((error) => {
+      commit("SET_VERIFY_LOADER", false);
+
       if (error.response.status == 401 || error.response.status == 404) {
         commit("SET_AUTH_ERROR", error.response.data.message);
         toast.error(`${error.response.data.errors.root}`, {

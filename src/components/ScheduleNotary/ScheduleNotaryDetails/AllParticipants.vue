@@ -113,8 +113,8 @@
 <script>
 import ModalComp from "@/components/ModalComp.vue";
 import { Icon } from "@iconify/vue";
-import AddParticipants from "@/components/RequestSchedule/Participants/AddParticipants.vue";
-import EditParticipants from "@/components/RequestSchedule/Participants/EditParticipants.vue";
+import AddParticipants from "@/components/ScheduleNotary/Participants/AddParticipants.vue";
+import EditParticipants from "@/components/ScheduleNotary/Participants/EditParticipants.vue";
 import { randomId } from "@/utils/helper";
 import store from "@/store";
 

@@ -27,14 +27,7 @@
         <div class="">
           <div>
             <div
-              class="
-                mx-2
-                progress__box
-                d-flex
-                justify-content-between
-                align-items-center
-                m-auto
-              "
+              class="mx-2 progress__box d-flex justify-content-between align-items-center m-auto"
             >
               <div
                 class="progress__bar"
@@ -60,21 +53,14 @@
                         ? 'fa6-solid:check'
                         : step.icon
                     "
-                    :height="40"
-                    :width="40"
+                    :height="30"
+                    :width="30"
                   />
                 </button>
               </div>
             </div>
             <div
-              class="
-                progress__description
-                d-flex
-                justify-content-between
-                align-items-center
-                m-auto
-                mt-1
-              "
+              class="progress__description d-flex justify-content-between align-items-center m-auto mt-1"
             >
               <h6
                 :class="step.step <= currentstep ? 'text-primary' : ''"
@@ -175,7 +161,7 @@ export default {
   position: relative;
 }
 .progress__success {
-  background-color: #003bb3;
+  background-color: #766458;
 }
 .progress__default {
   background-color: #cbcbcb;
@@ -184,7 +170,7 @@ export default {
 .progress__bar {
   position: absolute;
   height: 6px;
-  background-color: #003bb3;
+  background-color: #766458;
   z-index: 1;
   top: 50%;
   left: 0px;
@@ -194,7 +180,7 @@ export default {
 .progress__bar2 {
   content: "";
   position: absolute;
-  height: 6px;
+  height: 4px;
   width: 100%;
   background-color: #cbcbcb;
   z-index: 0;

@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import store from "@/store";
 import App from "./App.vue";
 import router from "@/router/router";
-import "../node_modules/nprogress/nprogress.css";
+import "@/assets/css/nprogress.css";
 import VueToast from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 import $ from "jquery";

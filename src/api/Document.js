@@ -12,6 +12,7 @@ const DOCUMENT_RESTORE = "document-multiple-restore";
 const DOCUMENT_COMPLETE = "document-complete";
 const DOCUMENT_RECEIVED = "documents-received";
 const DOCUMENT_TEMPORAL_DELETED = "documents-temporal-deleted";
+const DOCUMENT_SHARE = "document-share";
 
 const DOCUMENT_PARTICIPANT_ADD_SELF = "document-participant-add-self";
 const DOCUMENT_PARTICIPANTS = "document-participants";
@@ -40,6 +41,12 @@ export default {
 
   allCompletedDocuments(documentId) {
     return Api.get(`${DOCUMENT_COMPLETE}/${documentId}`);
+  },
+
+  completedDoc(data) {
+    return Api.put(`${DOCUMENT_COMPLETE}/${data.document_id}?share=0`, {
+      files: data.files,
+    });
   },
 
   allReceivedDocuments(token) {
@@ -88,7 +95,7 @@ export default {
   mailToParticipant(data) {
     return Api.post(DOCUMENT_PARTICIPANTS_SEND_MAIL, data);
   },
-
+  // /api/v1/document-complete/{id}
   feedback(data) {
     return Api.post(DOCUMENT_FEEDBACK, data);
   },
@@ -115,5 +122,9 @@ export default {
 
   getDocumentAuditTrails(docId) {
     return Api.get(`${DOCUMENT_AUDIT_TRAIL}/${docId}`);
+  },
+
+  shareDoc(id, formData) {
+    return Api.put(`${DOCUMENT_SHARE}/${id}`, { documents: formData });
   },
 };

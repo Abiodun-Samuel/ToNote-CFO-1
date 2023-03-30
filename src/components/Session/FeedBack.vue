@@ -99,14 +99,18 @@ const submit = () => {
   }).then(() => {
     rating.value = null;
     comment.value = null;
-    toast.success(
-      `Your feedback will help us improve the quality of the service of the
-          Commissioner for Oaths`,
-      {
-        position: "top-right",
-        duration: 4000,
-      }
-    );
+    toast.success("Feedback was sent successfully", {
+      timeout: 5000,
+      position: "top-right",
+    });
+    // toast.success(
+    //   `Your feedback will help us improve the quality of the service of the
+    //       Commissioner for Oaths`,
+    //   {
+    //     position: "top-right",
+    //     duration: 4000,
+    //   }
+    // );
     if (!userDocument.value.is_the_owner_of_document)
       return (window.location.href =
         process.env.VUE_APP_URL_AUTH_LIVE + "/redirecting?qt=" + token.value);

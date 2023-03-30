@@ -18,6 +18,11 @@ export const payment_gateways = (state) => {
 export const schedule_details = (state) => {
   return state.schedule_details;
 };
+
+export const transactionId = (state) => {
+  return state.schedule_details?.transactions[0]?.id;
+};
+
 export const schedule_details_loading = (state) => {
   return state.schedule_details_loading;
 };

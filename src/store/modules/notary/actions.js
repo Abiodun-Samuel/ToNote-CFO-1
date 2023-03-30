@@ -144,10 +144,7 @@ export const notaryFeedbackAction = ({ commit }, payload) => {
   return Notary.notaryFeedbackApi(payload)
     .then(() => {
       commit("SET_NOTARY_FEEDBACK_LOADER", false);
-      toast.success("Feedback was sent successfully", {
-        timeout: 5000,
-        position: "top-right",
-      });
+
       return true;
     })
     .catch((error) => {

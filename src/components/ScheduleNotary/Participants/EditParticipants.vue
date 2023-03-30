@@ -65,12 +65,11 @@
             </td>
             <td>
               <input
-                type="text"
+                type="tel"
                 name="phone"
                 v-model="participant.phone"
                 placeholder="Phone Number"
                 class="form-control form-control-sm phone px-1 border-0"
-                required
               />
             </td>
             <td>
@@ -82,7 +81,6 @@
               >
                 <option value="Signer">Signer</option>
                 <option value="Viewer">Viewer</option>
-                <option value="Viewer">Recipient</option>
               </select>
             </td>
             <td>
@@ -99,14 +97,10 @@
         </table>
       </div>
 
-      <div class="d-flex justify-content-end">
+      <div class="d-flex justify-content-start mt-1">
         <button
           type="submit"
-          class="
-            btn btn-sm btn-primary
-            waves-effect waves-float waves-light
-            d-block
-          "
+          class="btn btn-sm btn-primary waves-effect waves-float waves-light d-block"
         >
           Done
         </button>
@@ -158,7 +152,8 @@ export default {
           phone: "",
           role: "",
           action: "-",
-          entry_point: "Notary",
+          entry_point:
+            this.$route.query.session == "notary" ? "Notary" : "Affidavit",
         },
       ],
     };
@@ -177,14 +172,8 @@ export default {
         last_name: store.state.auth.profile?.last_name,
         phone: store.state.auth.profile?.phone,
         role: "Signer",
-        entry_point: "Notary",
-
-        // id: randomId(10),
-        // first_name: this.userProfile.first_name,
-        // last_name: this.userProfile.last_name,
-        // email: this.userProfile.email,
-        // phone: this.userProfile.phone,
-        // role: "Signer",
+        entry_point:
+          this.$route.query.session == "notary" ? "Notary" : "Affidavit",
         action: "-",
       });
     },
@@ -197,7 +186,8 @@ export default {
         phone: "",
         role: "",
         action: "-",
-        entry_point: "Notary",
+        entry_point:
+          this.$route.query.session == "notary" ? "Notary" : "Affidavit",
       });
     },
     removeRow(id) {
@@ -218,7 +208,8 @@ export default {
           email: obj.email,
           phone: obj.phone,
           role: obj.role,
-          entry_point: "Notary",
+          entry_point:
+            this.$route.query.session == "notary" ? "Notary" : "Affidavit",
         });
         formObj.push({
           id: obj.id,
@@ -227,10 +218,10 @@ export default {
           email: obj.email,
           phone: obj.phone,
           role: obj.role,
-          entry_point: "Notary",
+          entry_point:
+            this.$route.query.session == "notary" ? "Notary" : "Affidavit",
         });
       });
-      // eventBus.$emit(event.participantsList, formObj);
       this.$emit("close", true);
       formObj = [];
       this.rows = [
@@ -251,7 +242,6 @@ export default {
 
 <style lang='css'>
 .table > :not(caption) > * {
-
   padding: 0.3rem !important;
 }
 </style>

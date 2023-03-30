@@ -1,18 +1,21 @@
 <template>
   <div class="container-fluid">
-    <div class="row mx-auto" :style="{ width: '815px' }">
-      <div class="card col-lg-9" :style="{ width: '815px' }">
+    <div class="row">
+      <div class="card col-lg-9 mx-auto">
         <div class="card-body">
           <template v-if="!is_notary">
-            <h4>Session ended successfully</h4>
-            <p>Download your session resources below</p>
+            <h4 class="fw-bolder">Session ended successfully</h4>
+            <p class="fw-bold">Download your session resources below</p>
           </template>
 
-          <h4 v-if="is_notary">
-            Kindly submit your session recordings and documents to
-            <span class="text-primary">submissions@supremecourt.gov.ng</span>.
-            Click share to proceed.
-          </h4>
+          <template v-if="is_notary">
+            <h4 class="fw-bolder">Session ended successfully</h4>
+            <p class="fw-bold">
+              Kindly submit your session recordings and documents to
+              <span class="text-primary">submissions@supremecourt.gov.ng</span>.
+              Click share to proceed.
+            </p>
+          </template>
 
           <div class="my-1 text-center">
             <a
@@ -44,7 +47,10 @@
         </div>
       </div>
 
-      <div class="col-lg-9 col-sm-12" :style="{ width: '815px' }">
+      <div class="d-flex justify-content-center" v-if="isDocLoading">
+        <PreLoader />
+      </div>
+      <div v-else class="col-lg-9 col-sm-12 mx-auto">
         <div class="mb-1">
           <!-- <button class="btn btn-outline-secondary float-end">Share</button> -->
           <button
@@ -92,17 +98,28 @@
 
         <p>Title: {{ documentTitle }}</p>
         <div class="card mb-0 bg-light">
-          <div id="mainWrapper" class="mx-auto" :style="{ width: '815px' }">
-            <RenderPage
+          <div
+            id="mainWrapper"
+            :style="{ width: '100%' }"
+            class="sec-1 digi_cert downloader mb-1"
+          >
+            <VuePdfEmbed
+              v-for="doc in files"
+              :key="doc.id"
+              :source="doc.file_url"
+            />
+
+            <!-- <RenderPage
               v-for="doc in sortedFile"
               :key="doc.id"
+              :docId="userDocument.id"
               comp="completed"
               :file="doc.file_url"
               @click="$emit('docId', doc.id)"
               @pageId="getPageId"
               @documentHeight="getHeight"
-            >
-              <template #document-tools>
+            > -->
+            <!-- <template #document-tools>
                 <template v-if="computedTools?.length != 0 && documentHeight">
                   <div
                     v-for="tool in activeTaskFilter(computedTools, doc.id)"
@@ -120,12 +137,12 @@
                     />
                   </div>
                 </template>
-              </template>
-            </RenderPage>
+              </template> -->
+            <!-- </RenderPage> -->
           </div>
         </div>
 
-        <section class="card" :style="{ width: '815px' }">
+        <!-- <section class="card" >
           <div
             class="sec-1 digi_cert downloader mb-1"
             style="min-height: 1000px"
@@ -170,10 +187,10 @@
                       <div class="col-6 pb-1">Email</div>
                       <div class="col-6 pb-1">{{ part.email }}</div>
                     </div>
-                    <!-- <div class="row">
+                    <div class="row">
                       <div class="col-6 pb-1">ID Number.</div>
                       <div class="col-6 pb-1">1234567889</div>
-                    </div> -->
+                    </div>
                     <div class="row">
                       <div class="col-6 pb-1">Device IP.</div>
                       <div class="col-6 pb-1">{{ ipiFy }}</div>
@@ -198,7 +215,6 @@
               </template>
               <template v-else>
                 <ul class="timeline" v-if="audit" style="font-size: 12px">
-                  <!-- <li class="timeline-item" v-for="(item, index) in audited.slice(0, 12)" :key="index"> -->
                   <li
                     class="timeline-item"
                     v-for="(item, index) in audited"
@@ -206,29 +222,17 @@
                   >
                     <template v-if="userDocument.status == 'New'">
                       <span
-                        class="
-                          timeline-point
-                          timeline-point-secondary
-                          timeline-point-indicator
-                        "
+                        class="timeline-point timeline-point-secondary timeline-point-indicator"
                       ></span>
                     </template>
                     <template v-else-if="userDocument.status == 'Sent'">
                       <span
-                        class="
-                          timeline-point
-                          timeline-point-primary
-                          timeline-point-indicator
-                        "
+                        class="timeline-point timeline-point-primary timeline-point-indicator"
                       ></span>
                     </template>
                     <template v-else>
                       <span
-                        class="
-                          timeline-point
-                          timeline-point-success
-                          timeline-point-indicator
-                        "
+                        class="timeline-point timeline-point-success timeline-point-indicator"
                       ></span>
                     </template>
                     <div class="timeline-event">
@@ -258,9 +262,7 @@
               </div>
             </div>
           </div>
-
-          <!-- <div class="divider" style="margin: 0.4rem 0;"></div> -->
-        </section>
+        </section> -->
       </div>
     </div>
   </div>
@@ -293,18 +295,19 @@
     </template>
   </ModalComp> -->
 
-  <ModalComp :show="emailModal" :footer="false" @close="emailModal = false">
+  <ModalComp
+    :size="'modal-md'"
+    :show="emailModal"
+    :footer="false"
+    @close="emailModal = false"
+  >
     <template #header>
-      <h5 class="modal-title">Share document</h5>
+      <h5 class="modal-title fw-bolder">Share document</h5>
     </template>
 
     <template #body>
       <p class="text-center">The following people will recieve this document</p>
-      <MailToParticipant
-        :files="doneDataUrl"
-        @close="emailModal = false"
-        :isLoading="loading"
-      />
+      <MailToParticipant @close="emailModal = false" />
     </template>
   </ModalComp>
 
@@ -313,6 +316,7 @@
     :show="notaryShareModal"
     :footer="false"
     @close="notaryShareModal = false"
+    :size="'modal-md'"
   >
     <template #header>
       <h5 class="modal-title">Send document</h5>
@@ -328,16 +332,18 @@
 import { Icon } from "@iconify/vue";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import jsPDF from "jspdf";
-import html2pdf from "html2pdf.js";
-
+// import jsPDF from "jspdf";
+// import html2pdf from "html2pdf.js";
+import PreLoader from "@/components/Loader/PreLoader.vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
-import RenderPage from "@/components/Document/Edit/Main/RenderPage";
-import ToolAnnotationDisabled from "@/components/Document/Edit/Tools/ToolAnnotationDisabled.vue";
+// import RenderPage from "@/components/Document/Edit/Main/RenderPage";
+// import ToolAnnotationDisabled from "@/components/Document/Edit/Tools/ToolAnnotationDisabled.vue";
 import ModalComp from "@/components/ModalComp.vue";
 import MailToParticipant from "@/components/Document/Edit/MailToParticipant.vue";
 import MailToNotary from "@/components/Document/Edit/MailToNotary.vue";
 import moment from "moment";
+import VuePdfEmbed from "vue-pdf-embed";
+import { saveAs } from "file-saver";
 
 const dateTime = () => {
   return moment().format("Do MMM YYYY");
@@ -346,31 +352,34 @@ const dateTime = () => {
 const {
   userDocument,
   // doneDocument,
-  workingTools,
+  // workingTools,
   documentAuditTrail,
-  virtual_session_details,
+  // virtual_session_details,
   // eslint-disable-next-line no-unused-vars
   session_complete,
   is_notary,
   token,
+  isDocLoading,
 } = useGetters({
   userDocument: "document/userDocument",
   // doneDocument: "document/doneDocument",
-  workingTools: "document/workingTools",
+  // workingTools: "document/workingTools",
   documentAuditTrail: "document/audit_trails",
-  virtual_session_details: "schedule/virtual_session_details",
+  // virtual_session_details: "schedule/virtual_session_details",
   session_complete: "document/session_complete",
   is_notary: "auth/is_notary",
   token: "auth/token",
+  isDocLoading: "document/isDocLoading",
 });
 
 const {
-  getDocumentAuditTrails,
-  doneEditing,
+  // getDocumentAuditTrails,
+  // doneEditing,
   clearCompleteSession,
+  // eslint-disable-next-line no-unused-vars
   getUserDocument,
 } = useActions({
-  getDocumentAuditTrails: "document/getDocumentAuditTrails",
+  // getDocumentAuditTrails: "document/getDocumentAuditTrails",
   doneEditing: "document/doneEditing",
   clearCompleteSession: "document/clearCompleteSession",
   getUserDocument: "document/getUserDocument",
@@ -383,6 +392,7 @@ const notaryShareModal = ref(false);
 const route = useRouter();
 const uri = ref("");
 const date = dateTime();
+const files = ref([]);
 const documentTitle = userDocument.value.title;
 const videoFilename =
   "Recorded video for " + userDocument.value.title + "_" + date;
@@ -396,28 +406,33 @@ let isActive = ref(false);
 let video_url = route.currentRoute.value.query.record_file;
 video_url === undefined ? (isActive = false) : (isActive = true);
 
-const computedTools = computed(() => {
-  return workingTools.value;
-});
+// const files = computed(() => {
+//   return userDocument.value.documentUploads.filter((item) => {
+//     return item.status == "Completed";
+//   });
+// });
+// const computedTools = computed(() => {
+//   return workingTools.value;
+// });
 
-const sessionDetails = computed(() => {
-  return virtual_session_details.value;
-});
+// const sessionDetails = computed(() => {
+//   return virtual_session_details.value;
+// });
 
-const activeTaskFilter = (tools, docUpId) => {
-  let activeTasks = tools.filter((tool) => {
-    return tool.document_upload_id === docUpId;
-  });
-  return activeTasks;
-};
+// const activeTaskFilter = (tools, docUpId) => {
+//   let activeTasks = tools.filter((tool) => {
+//     return tool.document_upload_id === docUpId;
+//   });
+//   return activeTasks;
+// };
 
 const isDownload = ref(false);
 const doneDataUrl = ref([]);
-const files = ref([]);
-const sortedFile = ref("");
+// const files = ref([]);
+// const sortedFile = ref("");
 
-const documentHeight = ref(0);
-const getHeight = (event) => (documentHeight.value = event);
+// const documentHeight = ref(0);
+// const getHeight = (event) => (documentHeight.value = event);
 
 const audited = ref([]);
 const audit = computed(() => {
@@ -436,67 +451,73 @@ const audit = computed(() => {
 });
 
 const exportHTMLToPDF = async (params) => {
-  if (!params) isDownload.value = true;
-  const pages = document.getElementsByClassName("downloader");
+  params;
+  let url = files.value[0].file_url;
+  let fileName = userDocument.value.title;
+  const res = await fetch(url);
+  const blob = await res.blob();
+  saveAs(blob, fileName);
+  // if (!params) isDownload.value = true;
+  // const pages = document.getElementsByClassName("downloader");
 
-  const opt = {
-    margin: [0, 0, -2, 0],
-    filename: userDocument.value.title + ".pdf",
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { dpi: 192, letterRendering: true },
-    jsPDF: {
-      unit: "in",
-      format: "letter",
-      orientation: "portrait",
-      compressPDF: false,
-    },
-  };
+  // const opt = {
+  //   margin: [0, 0, -2, 0],
+  //   filename: userDocument.value.title + ".pdf",
+  //   image: { type: "jpeg", quality: 0.98 },
+  //   html2canvas: { dpi: 192, letterRendering: true },
+  //   jsPDF: {
+  //     unit: "in",
+  //     format: "letter",
+  //     orientation: "portrait",
+  //     compressPDF: false,
+  //   },
+  // };
 
-  const doc = new jsPDF(opt.jsPDF);
-  const pageSize = jsPDF.getPageSize(opt.jsPDF);
+  // const doc = new jsPDF(opt.jsPDF);
+  // const pageSize = jsPDF.getPageSize(opt.jsPDF);
 
-  for (let i = 0; i < pages.length; i++) {
-    const page = pages[i];
+  // for (let i = 0; i < pages.length; i++) {
+  //   const page = pages[i];
 
-    if (params != "done") {
-      const pageImage = await html2pdf().set(opt).from(page).outputImg();
-      if (i != 0) doc.addPage();
-      doc.addImage(
-        pageImage.src,
-        "jpeg",
-        opt.margin[0],
-        opt.margin[0],
-        pageSize.width,
-        pageSize.height
-      );
-    } else {
-      await html2pdf()
-        .set(opt)
-        .from(page)
-        .outputPdf()
-        .then(function (pdf) {
-          doneDataUrl.value.push("data:application/pdf;base64," + btoa(pdf));
-        });
-    }
-  }
+  //   if (params != "done") {
+  //     const pageImage = await html2pdf().set(opt).from(page).outputImg();
+  //     if (i != 0) doc.addPage();
+  //     doc.addImage(
+  //       pageImage.src,
+  //       "jpeg",
+  //       opt.margin[0],
+  //       opt.margin[0],
+  //       pageSize.width,
+  //       pageSize.height
+  //     );
+  //   } else {
+  //     await html2pdf()
+  //       .set(opt)
+  //       .from(page)
+  //       .outputPdf()
+  //       .then(function (pdf) {
+  //         doneDataUrl.value.push("data:application/pdf;base64," + btoa(pdf));
+  //       });
+  //   }
+  // }
 
-  if (params == "done") {
-    if (pages.length === doneDataUrl.value.length) isDoneEdit();
-    return;
-  }
+  // if (params == "done") {
+  //   if (pages.length === doneDataUrl.value.length) isDoneEdit();
+  //   return;
+  // }
 
-  const pdf = doc.save(opt.filename);
-  if (pdf) isDownload.value = false;
-  return pdf;
+  // const pdf = doc.save(opt.filename);
+  // if (pdf) isDownload.value = false;
+  // return pdf;
 };
 
-const isDoneEdit = () => {
-  let dataObj = {
-    document_id: userDocument.value.id,
-    files: doneDataUrl.value,
-  };
-  doneEditing(dataObj);
-};
+// const isDoneEdit = () => {
+//   let dataObj = {
+//     document_id: userDocument.value.id,
+//     files: doneDataUrl.value,
+//   };
+//   doneEditing(dataObj);
+// };
 
 // const confirmSave = () => {
 //   exportHTMLToPDF("done");
@@ -509,11 +530,30 @@ const createdAt = (dateParams) => {
 const ipiFy = ref("");
 // const saveContinue = ref(false);
 onMounted(() => {
-  getUserDocument(userDocument.value.id).then((value) => {
-    if (value) {
-      if (userDocument.value.is_the_owner_of_document)
-        setTimeout(() => exportHTMLToPDF("done"), 8000);
-    }
+  // isDocLoading.value = true;
+  getUserDocument(userDocument.value.id).then(() => {
+    files.value = userDocument.value.documentUploads.filter((item) => {
+      return item.status == "Completed";
+    });
+    // files.value = userDocument.value.documentUploads.filter((item) => {
+    //   return item.status == "Completed";
+    // if (item.status == "Completed") {
+    // if (item.status == 'Processing' && item.number_ordering != null) { //? NOTE: This is the real condition
+    //   files.value.push({
+    //     id: item.id,
+    //     file_url: item.file_url,
+    //     number: item.number_ordering,
+    //   });
+    // }
+    // if (item.number_ordering != null) {
+    //   sortedFile.value = files.value.sort((a, b) =>
+    //     a.number > b.number ? 1 : -1
+    //   );
+    // } else {
+    //   sortedFile.value = files.value;
+    // }
+    // });
+    // isDocLoading.value = false;
   });
   // console.log(userDocument.value.documentUploads);
   redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
@@ -522,27 +562,7 @@ onMounted(() => {
   let downloadLink = document.getElementById("download");
   uri.value = route.currentRoute.value.query;
   video_url === undefined ? "" : (downloadLink.href = uri.value?.record_file);
-  getDocumentAuditTrails(userDocument.value.id);
-
-  userDocument.value.documentUploads.filter((item) => {
-    console.log(item);
-    if (item.status == "Processing") {
-      // if (item.status == 'Processing' && item.number_ordering != null) { //? NOTE: This is the real condition
-      files.value.push({
-        id: item.id,
-        file_url: item.file_url,
-        number: item.number_ordering,
-      });
-    }
-    if (item.number_ordering != null) {
-      sortedFile.value = files.value.sort((a, b) =>
-        a.number > b.number ? 1 : -1
-      );
-    } else {
-      console.log(files.value);
-      sortedFile.value = files.value;
-    }
-  });
+  // getDocumentAuditTrails(userDocument.value.id);
 
   fetch("https://api.ipify.org?format=json")
     .then((response) => response.json())
@@ -557,6 +577,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+h4,
+h5,
+p,
+span,
+a {
+  font-family: "Poppins", sans-serif;
+}
 .parent {
   width: 815px;
   position: absolute;

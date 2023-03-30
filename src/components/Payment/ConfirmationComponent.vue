@@ -26,7 +26,7 @@
             disabled
             ref="url"
             type="text"
-            :value="`${home}/notary/session-prep/${schedule_details?.id}`"
+            :value="`${home}/notary/session-prep/${schedule_details?.id}?token=${token}`"
             placeholder="Enter your email"
             class="form-control"
             :style="copy_state && 'border-color: #14A44D'"
@@ -49,6 +49,7 @@
           :to="{
             name: 'session-prep',
             params: { session_id: schedule_details.id },
+            query: { token: token },
           }"
         >
           Proceed</router-link

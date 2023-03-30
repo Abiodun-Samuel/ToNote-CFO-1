@@ -61,12 +61,11 @@
             </td>
             <td>
               <input
-                type="text"
+                type="tel"
                 name="phone"
                 v-model="row.phone"
                 placeholder="Phone Number"
                 class="form-control form-control-sm phone px-1 border-0"
-                required
               />
             </td>
             <td>
@@ -78,7 +77,6 @@
               >
                 <option value="Signer">Signer</option>
                 <option value="Viewer">Viewer</option>
-                <option value="Viewer">Recipient</option>
               </select>
             </td>
             <td>
@@ -97,11 +95,7 @@
 
       <button
         type="submit"
-        class="
-          btn btn-sm btn-primary
-          waves-effect waves-float waves-light
-          d-block
-        "
+        class="btn btn-sm btn-primary waves-effect waves-float waves-light d-block"
       >
         Done
       </button>

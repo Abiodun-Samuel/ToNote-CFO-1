@@ -86,8 +86,13 @@ const schema = Yup.object().shape({
 const loading = ref(false);
 
 const onSubmit = (params) => {
+  const formData = {
+    email: params.email,
+    password: params.password,
+    entry_point: "User",
+  };
   loading.value = true;
-  loginUser(params);
+  loginUser(formData);
   loading.value = false;
 };
 

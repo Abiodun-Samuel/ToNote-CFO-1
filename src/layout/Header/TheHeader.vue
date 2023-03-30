@@ -2,28 +2,26 @@
   <nav
     v-if="isVerifyPage || dashboard.token != null || token != null"
     style="height: 70px"
-    class="
-      header-navbar
-      navbar-expand-lg navbar navbar-fixed
-      align-items-center
-      navbar-shadow navbar-brand-center
-    "
+    class="header-navbar navbar-expand-lg navbar navbar-fixed align-items-center navbar-shadow navbar-brand-center"
     data-nav="brand-center"
   >
     <div class="navbar-header d-lg-block d-none">
       <ul class="nav navbar-nav">
         <li class="nav-item">
           <template v-if="role != 'Viewer'">
-            <router-link
+            <!-- <router-link
               :to="{ name: 'document.dashboard' }"
               class="navbar-brand me-0"
             >
               <img src="@/assets/logo-dark.png" alt="ToNote" height="26" />
-            </router-link>
+            </router-link> -->
+            <a href="#!" class="navbar-brand me-0">
+              <img src="@/assets/logo-dark.png" alt="ToNote" height="45" />
+            </a>
           </template>
           <template v-else>
             <a href="#!" class="navbar-brand me-0">
-              <img src="@/assets/logo-dark.png" alt="ToNote" height="26" />
+              <img src="@/assets/logo-dark.png" alt="ToNote" height="45" />
             </a>
           </template>
         </li>
@@ -31,13 +29,7 @@
     </div>
 
     <div
-      class="
-        navbar-container
-        d-flex
-        justify-content-between
-        align-items-center
-        content
-      "
+      class="navbar-container d-flex justify-content-between align-items-center content"
     >
       <div class="bookmark-wrapper d-flex align-items-center">
         <ul class="nav navbar-nav bookmark-icons" v-if="role != 'Viewer'">
@@ -73,11 +65,25 @@
             >
               <!-- <a class="dropdown-item" :href="redirectToUserDashboard + '/redirecting?qt=' + token">
                 Dashboard</a> -->
-              <router-link
+              <a
+                v-if="!is_notary"
+                class="dropdown-item"
+                :href="redirectToUserDashboard + '/redirecting?qt=' + token"
+              >
+                Home</a
+              >
+              <a
+                v-if="is_notary"
+                class="dropdown-item"
+                :href="redirectToNotaryDashboard + '/redirecting?qt=' + token"
+              >
+                Home</a
+              >
+              <!-- <router-link
                 :to="{ name: 'document.dashboard' }"
                 class="dropdown-item"
                 >Home</router-link
-              >
+              > -->
             </div>
           </li>
         </ul>
@@ -85,16 +91,19 @@
 
       <div class="d-lg-none d-md-block text-center">
         <template v-if="role != 'Viewer'">
-          <router-link
+          <a href="#!" class="navbar-brand me-0">
+            <img src="@/assets/logo-dark.png" alt="ToNote" height="35" />
+          </a>
+          <!-- <router-link
             :to="{ name: 'document.dashboard' }"
             class="navbar-brand me-0"
           >
             <img src="@/assets/logo-dark.png" alt="ToNote" height="20" />
-          </router-link>
+          </router-link> -->
         </template>
         <template v-else>
           <a href="#!" class="navbar-brand me-0">
-            <img src="@/assets/logo-dark.png" alt="ToNote" height="20" />
+            <img src="@/assets/logo-dark.png" alt="ToNote" height="35" />
           </a>
         </template>
       </div>
@@ -159,13 +168,7 @@
             data-bs-popper="none"
           >
             <div
-              class="
-                dropdown-item
-                d-flex
-                flex-column
-                justify-content-center
-                align-items-center
-              "
+              class="dropdown-item d-flex flex-column justify-content-center align-items-center"
             >
               <span class="avatar h6">
                 <template v-if="plan == 'Business' && image != null">
@@ -197,12 +200,7 @@
 
             <div
               v-if="plan"
-              class="
-                dropdown-item
-                d-flex
-                justify-content-center
-                align-items-center
-              "
+              class="dropdown-item d-flex justify-content-center align-items-center"
             >
               <span class="avatar">
                 <template v-if="plan == 'Business' && image != null">
@@ -267,13 +265,15 @@ import { ref, computed, onMounted, watch, onUpdated } from "vue";
 
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
 
-const { token, profile, teamLoader, teams, userDocument } = useGetters({
-  token: "auth/token",
-  profile: "auth/profile",
-  teamLoader: "team/teamLoader",
-  teams: "team/teams",
-  userDocument: "document/userDocument",
-});
+const { token, profile, teamLoader, teams, userDocument, is_notary } =
+  useGetters({
+    token: "auth/token",
+    profile: "auth/profile",
+    teamLoader: "team/teamLoader",
+    teams: "team/teams",
+    userDocument: "document/userDocument",
+    is_notary: "auth/is_notary",
+  });
 
 const { logoutUser } = useActions({
   logoutUser: "auth/logoutUser",
@@ -285,6 +285,7 @@ const firstName = ref("");
 const lastName = ref("");
 const plan = ref("");
 const redirectToUserDashboard = ref("");
+const redirectToNotaryDashboard = ref("");
 const isVerifyPage = ref(false);
 
 watch(
@@ -334,6 +335,7 @@ onUpdated(() => {
 
 onMounted(() => {
   redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
+  redirectToNotaryDashboard.value = process.env.VUE_APP_URL_NOTARY_STAGING;
 });
 </script>
 

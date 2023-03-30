@@ -55,7 +55,7 @@
           <div v-if="virtual_session_details?.immediate">
             <!-- notary -->
             <div
-              v-if="user_from_doc?.role === 'Notary'"
+              v-if="userParticipant?.role === 'Notary'"
               style="height: 30px"
               class="my-2"
             >
@@ -200,7 +200,7 @@
               </div>
             </template>
             <template v-else>
-              <template v-if="user_from_doc?.role === 'Notary'">
+              <template v-if="userParticipant?.role === 'Notary'">
                 <div style="height: 30px" class="my-2">
                   <VueWriter
                     class="h4 fw-bold text-center"
@@ -331,7 +331,7 @@ const virtual_session_loader = ref(true);
 const sessionReady = ref(false);
 const checkTimeInterval = ref(null);
 const openVerificationModal = ref(false);
-const user_from_doc = ref({
+const userParticipant = ref({
   role: "",
 });
 const notary_available = ref(false);
@@ -378,7 +378,7 @@ onUnmounted(() => {
 const checkdate = (date) => {
   let sessionDate = moment(date);
   let nowDate = moment();
-  if (nowDate > sessionDate) {
+  if (nowDate >= sessionDate) {
     sessionReady.value = true;
   } else {
     sessionReady.value = false;
@@ -386,6 +386,11 @@ const checkdate = (date) => {
 };
 
 onMounted(() => {
+  start();
+  socket.on(events.JOIN_ROOM_MESSAGE, (data) => {
+    console.log(data.message);
+  });
+
   sessionDetails(route.params.session_id).then(() => {
     if (
       moment() >
@@ -403,7 +408,8 @@ onMounted(() => {
           " " +
           virtual_session_details.value?.start_time
       );
-    }, 1000);
+    }, 0);
+
     socket.auth = {
       username: `${userProfile.value.first_name}-${userProfile.value.last_name}`,
       sessionRoom: `${virtual_session_details.value?.id}`,
@@ -411,26 +417,20 @@ onMounted(() => {
     };
     socket.connect();
 
-    user_from_doc.value =
-      virtual_session_details.value?.schedule.participants.find((user) => {
+    userParticipant.value =
+      virtual_session_details.value.schedule.participants.find((user) => {
         return user.user_id == userProfile.value?.id;
       });
 
     agoraToken({
       channel_name: route.params.session_id,
-      user_id: `${userProfile.value.first_name}-${user_from_doc.value?.role}-${userProfile.value.initials}`,
+      user_id: `${userProfile.value.first_name}-${userParticipant.value?.role}-${userProfile.value.initials}`,
       role: "Publisher",
     }).then((value) => {
       if (value) virtual_session_loader.value = false;
     });
   });
-});
 
-onMounted(() => {
-  start();
-  socket.on(events.JOIN_ROOM_MESSAGE, (data) => {
-    console.log(data.message);
-  });
   // test parameters for socket.io
   // socket.on("connect_message", () => {});
   // socket.on("disconnect_message", () => {});
@@ -464,8 +464,8 @@ onMounted(() => {
 
 <style scoped>
 .btn-primary {
-  background-color: #003bb3 !important;
-  border-color: #003bb3 !important;
+  background-color: #766458 !important;
+  border-color: #766458 !important;
 }
 .btn {
   font-weight: 400;

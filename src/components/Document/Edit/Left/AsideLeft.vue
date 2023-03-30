@@ -373,7 +373,6 @@ const addMouseMoveListener = (params) => {
 $(document).on("click", "#mainWrapper", function (e) {
   if (tempStorage.value == null) return;
   // $("#" + tool_id.value).css("display", "none");
-  console.log(allToolsId.value);
   if (allToolsId.value.length) {
     allToolsId.value.forEach((e) => {
       $("#" + e).css("display", "none");

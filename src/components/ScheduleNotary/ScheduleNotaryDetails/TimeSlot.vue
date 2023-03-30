@@ -376,7 +376,8 @@ export default {
       return store.getters["schedule/schedule_details"];
     },
     notary_list() {
-      return store.getters["notary/notary_list"];
+      let notaries = store.getters["notary/notary_list"];
+      return notaries.filter((notary) => notary.is_online == true);
     },
     countries() {
       return store.getters["schedule/country"];

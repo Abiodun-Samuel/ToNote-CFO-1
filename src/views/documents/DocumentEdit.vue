@@ -2,14 +2,7 @@
   <!-- for mobile  -->
   <div
     v-if="role != 'Viewer'"
-    class="
-      card
-      rounded-0
-      mb-0
-      p-1
-      d-lg-none d-sm-block d-md-block
-      custom-position
-    "
+    class="card rounded-0 mb-0 p-1 d-lg-none d-sm-block d-md-block custom-position"
   >
     <ul
       class="nav d-flex justify-content-between align-items-center"
@@ -148,13 +141,7 @@
 
   <!-- for web   -->
   <nav
-    class="
-      header-navbar
-      navbar navbar-expand-lg
-      floating-nav
-      navbar-shadow
-      container-xxl
-    "
+    class="header-navbar navbar navbar-expand-lg floating-nav navbar-shadow container-xxl"
     style="z-index: 102"
   >
     <div class="navbar-container d-flex content">
@@ -190,21 +177,14 @@
               <div class="btn-group">
                 <button
                   type="button"
-                  class="
-                    btn btn-primary btn-sm
-                    waves-effect waves-float waves-light
-                  "
+                  class="btn btn-primary btn-sm waves-effect waves-float waves-light"
                 >
                   <SettingIcon />
                   Signature tools
                 </button>
                 <button
                   type="button"
-                  class="
-                    btn btn-outline-primary btn-sm
-                    dropdown-toggle dropdown-toggle-split
-                    waves-effect waves-float waves-light
-                  "
+                  class="btn btn-outline-secondary btn-sm dropdown-toggle dropdown-toggle-split waves-effect waves-float waves-light"
                   data-bs-toggle="dropdown"
                   aria-expanded="true"
                 >
@@ -254,7 +234,7 @@
         </li> -->
 
         <template v-if="is_notary">
-          <li class="nav-item">
+          <li class="nav-item" style="position: relative; z-index: 202">
             <a class="nav-link nav-link-style">
               <button
                 class="btn btn-sm btn-primary waves-effect"
@@ -264,7 +244,7 @@
               </button>
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" style="position: relative; z-index: 202">
             <a class="nav-link nav-link-style">
               <button
                 class="btn btn-sm btn-primary waves-effect"
@@ -317,18 +297,11 @@
   </nav>
 
   <div
-    class="
-      content-area-wrapper
-      container-xxl
-      p-0
-      mt-5
-      overflow-x-scroll
-      border-0
-    "
+    class="content-area-wrapper container-xxl p-0 mt-5 overflow-x-scroll border-0"
     style="position: static !important"
   >
     <AsideLeft :chunkFileId="pageId" />
-    <MainContent @docId="getDocId" @open="open" />
+    <MainContent @docId="getDocId" @open="open" :auditTrail="auditTrail" />
     <AsideRight :isOpen="editSignerModal" @close="editSignerModal = false" />
   </div>
 
@@ -717,16 +690,45 @@
 
     <template #body>
       <div class="mt-2">
-        <h5 class="fw-bolder">
+        <h4 class="fw-bolder ff-poppins">
           Are you sure you wish to complete this session?
-        </h5>
+        </h4>
+
+        <div class="text-center my-2">
+          <template v-if="isDownload">
+            <div class="text-dark">
+              <h6 class="fw-bolder ff-poppins">Processing document</h6>
+              <div class="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          </template>
+          <template v-if="isDoneLoading">
+            <div class="text-dark">
+              <h6 class="fw-bolder ff-poppins">Encrypting document</h6>
+              <div class="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          </template>
+          <!-- <template v-if="!loadingCompleted || !isDoneLoading">
+            <h6 class="fw-bolder ff-poppins">Done</h6>
+          </template> -->
+        </div>
+
         <button
           @click="notaryCompleteSession"
           class="btn w-100 mt-2 btn-primary"
-          :disabled="complete_loading"
+          :disabled="isDownload"
         >
           <span
-            v-if="complete_loading"
+            v-if="isDownload"
             class="spinner-border spinner-border-sm me-1"
             role="status"
             aria-hidden="true"
@@ -812,7 +814,9 @@
         <img
           src="../../assets/images/logo2.png"
           alt="ToNote Logo"
-          class="my-1 confimation__logo"
+          class="my-1"
+          width="140"
+          height="140"
         />
         <h3 class="fw-bolder text-primary">Session Ended</h3>
         <p>
@@ -905,7 +909,7 @@ const {
   isDoneLoading,
   is_notary,
   virtual_session_details,
-  complete_loading,
+  // complete_loading,
   // leave_loading,
 } = useGetters({
   token: "auth/token",
@@ -918,7 +922,7 @@ const {
   isDoneLoading: "document/isDoneLoading",
   is_notary: "auth/is_notary",
   virtual_session_details: "schedule/virtual_session_details",
-  complete_loading: "notary/complete_loading",
+  // complete_loading: "notary/complete_loading",
   // leave_loading: "notary/leave_loading",
 });
 
@@ -930,18 +934,23 @@ const {
   removeDocument,
   removeRecentUpload,
   getUserPrints,
+  // eslint-disable-next-line no-unused-vars
   CompleteNotarySession,
+  getDocumentAuditTrails,
 } = useActions({
   doneEditing: "document/doneEditing",
   sendFeedback: "document/sendFeedback",
   removeNotification: "document/removeNotification",
   isGuest: "document/isGuest",
   removeDocument: "document/removeDocument",
-  removeRecentUpload: "document/removeRecentUpload",
+  removeRecentUpload:
+    "documen                                                                                              t/removeRecentUpload",
   getUserPrints: "print/getUserPrints",
   CompleteNotarySession: "notary/CompleteNotarySession",
+  getDocumentAuditTrails: "document/getDocumentAuditTrails",
 });
 
+const auditTrail = ref(false);
 const displayFeedback = ref(false);
 const showEndSessionModal = ref(false);
 const display_button = ref(false);
@@ -1000,18 +1009,24 @@ watch(
   }
 );
 const leave__session = () => {
-  window.location.pathname = "/notary";
+  window.location.href = "/notary";
 };
 
 const notaryCompleteSession = () => {
-  CompleteNotarySession({
-    id: virtual_session_details.value?.id,
-    status: "Completed",
-    cancel_reason: "This session has been completed successfully",
-    comment: "This session has been completed successfully",
-  }).then(() => {
-    socket.emit(events.NOTARY_COMPLETE_SESSION);
-    window.location.href = "/session-complete";
+  isDownload.value = true;
+  getDocumentAuditTrails(userDocument.value.id).then(() => {
+    auditTrail.value = true;
+    CompleteNotarySession({
+      id: virtual_session_details.value?.id,
+      status: "Completed",
+      cancel_reason: "This session has been completed successfully",
+      comment: "This session has been completed successfully",
+    }).then(() => {
+      socket.emit(events.NOTARY_COMPLETE_SESSION);
+      exportHTMLToPDF("done").then(() => (isDownload.value = false));
+      // route.push({ path: "/session-complete" });
+      // window.location.href = "/session-complete";
+    });
   });
 };
 
@@ -1019,7 +1034,6 @@ const closeGuest = () => {
   isGuest(false);
   window.location.href = process.env.VUE_APP_URL_WEBSITE;
 };
-
 const open = (params) => (isOpen.value = params);
 
 // const cancel = () => (cancelModal.value = true);
@@ -1049,9 +1063,7 @@ const updateStamp = () => {
 };
 
 const exportHTMLToPDF = async (params) => {
-  isDownload.value = true;
   const pages = document.getElementsByClassName("downloader");
-
   const opt = {
     margin: [0, 0, -2, 0],
     filename: userDocument.value.title + ".pdf",
@@ -1099,7 +1111,7 @@ const exportHTMLToPDF = async (params) => {
   }
 
   const pdf = doc.save(opt.filename);
-  if (pdf) isDownload.value = false;
+  // if (pdf) isDownload.value = false;
   return pdf;
 };
 
@@ -1228,6 +1240,72 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 5px;
+}
+
+.lds-ellipsis div {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #766458;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(0);
+  }
+}
+
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+
 .overflow-x-scroll {
   overflow-x: scroll !important;
 }

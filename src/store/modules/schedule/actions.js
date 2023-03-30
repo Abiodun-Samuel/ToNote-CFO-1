@@ -72,11 +72,11 @@ export const ScheduleVirtualSessionAction = ({ commit }, formData) => {
       .then((response) => {
         commit("SET_SCHEDULE_DETAILS_LOADER", false);
         commit("SET_SCHEDULE_DETAILS", response.data.data);
-        commit(
-          "transactions/SET_SCHEDULE_TRANSACTION_ID",
-          response.data.data.transactions[0].id,
-          { root: true }
-        );
+        // commit(
+        //   "transactions/SET_SCHEDULE_TRANSACTION_ID",
+        //   response.data.data.transactions[0].id,
+        //   { root: true }
+        // );
         resolve();
       })
       .catch((error) => {
@@ -84,9 +84,9 @@ export const ScheduleVirtualSessionAction = ({ commit }, formData) => {
         commit("SET_SCHEDULE_DETAILS_LOADER", false);
         commit("SET_SCHEDULE_DETAILS", null);
         toast.error(`${error.response.data.message}`);
-        commit("transactions/SET_SCHEDULE_TRANSACTION_ID", null, {
-          root: true,
-        });
+        // commit("transactions/SET_SCHEDULE_TRANSACTION_ID", null, {
+        //   root: true,
+        // });
         reject();
         // }
         // if (error.response.status == 422) {
@@ -100,12 +100,15 @@ export const ScheduleTransactionAction = (
   { commit, state },
   payment_gateway
 ) => {
-  Schedule.ScheduleTransactionApi({ id: state.transaction_id, payment_gateway })
+  Schedule.ScheduleTransactionApi({
+    id: state.schedule_details.transactions[0].id,
+    payment_gateway,
+  })
     .then(() => {
       commit("transactions/SET_SCHEDULE_TRANSACTION_STATUS", true, {
         root: true,
       });
-      toast.success("Congratulations, your request was success");
+      toast.success("Congratulations, your transaction was success");
     })
     .catch((error) => {
       if (error.response.status == 401 || error.response.status == 404) {

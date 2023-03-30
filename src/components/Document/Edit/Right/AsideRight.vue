@@ -7,7 +7,7 @@
             class="sidebar-menu-list sidebar-nav shadow sticky text-center p-1"
             style="overflow-y: scroll; height: 75vh !important"
           >
-            <VideoBox />
+            <!-- <VideoBox /> -->
             <!-- <div class="list-group list-group-messages">
               <div class="list-group-item list-group-item-action border-bottom">
                 Tool Management
@@ -222,12 +222,12 @@
       </div>
     </template>
   </ModalComp>
-</template>
+</template>d
 
 <script setup>
 import { Icon } from "@iconify/vue";
 import ModalComp from "@/components/ModalComp.vue";
-import VideoBox from "@/components/Video/VideoBox.vue";
+// import VideoBox from "@/components/Video/VideoBox.vue";
 
 import { computed, onMounted, ref, defineEmits, defineProps, watch } from "vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";

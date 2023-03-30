@@ -6,6 +6,10 @@ export const SET_TOKEN_TYPE = (state, tokenType) => {
   state.token_type = tokenType;
 };
 
+export const SET_VERIFY_LOADER = (state, payload) => {
+  state.verify_loader = payload;
+};
+
 export const SET_LOADER = (state, load) => {
   state.loader = load;
 };
