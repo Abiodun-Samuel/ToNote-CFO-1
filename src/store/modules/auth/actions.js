@@ -11,7 +11,7 @@ export const logoutUser = ({ commit }, formData) => {
       if (process.env.NODE_ENV == "development") {
         router.push({ name: "Login" });
       } else {
-        window.location.href = process.env.VUE_APP_URL_AUTH_LIVE;
+        window.location.href = process.env.VUE_APP_URL_AUTH_STAGING;
       }
     })
     .catch((error) => {
@@ -84,7 +84,7 @@ export const resetPassword = ({ commit }, formData) => {
       });
 
       setTimeout(() => {
-        window.location.href = process.env.VUE_APP_URL_WEBSITE;
+        window.location.href = process.env.VUE_APP_URL_WEBSITE_STAGING;
       }, 2000);
     })
     .catch((error) => {
@@ -132,7 +132,7 @@ export const setAuthentication = ({ commit }, data) => {
     })
     .catch((error) => {
       if (error.response.status == 401 || error.response.status == 404) {
-        window.location.href = process.env.VUE_APP_URL_AUTH_LIVE;
+        window.location.href = process.env.VUE_APP_URL_AUTH_STAGING;
       }
     });
 };

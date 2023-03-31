@@ -236,8 +236,8 @@ const remainingEnvelops = (str, arr) => {
 };
 
 onMounted(() => {
-  redirectToSignLink.value = process.env.VUE_APP_URL_SIGN_LINK;
-  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
+  redirectToSignLink.value = process.env.VUE_APP_URL_SIGN_LINK_STAGING;
+  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_STAGING;
   uri.value = capitalizeFirstLetter(route.currentRoute.value.query.status);
   page(uri.value);
 
@@ -246,7 +246,7 @@ onMounted(() => {
 
   upgradeUserAccount.value =
     process.env.NODE_ENV != "development"
-      ? process.env.VUE_APP_URL_USER_UPGRADE_LIVE
+      ? process.env.VUE_APP_URL_USER_UPGRADE_STAGING
       : process.env.VUE_APP_URL_USER_UPGRADE_LOCAL;
 
   setTimeout(() => {

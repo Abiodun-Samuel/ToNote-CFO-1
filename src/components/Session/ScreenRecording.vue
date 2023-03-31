@@ -362,7 +362,7 @@ function stopWatch() {
 
 onMounted(() => {
   // confirmRecording();
-  // redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
+  // redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_STAGING;
 });
 </script>
 

@@ -46,8 +46,8 @@ onMounted(() => {
   // setupTimers();
 
   (function () {
-    const propertyId = process.env.VUE_APP_TAWK_PROPERTY_ID;
-    const widgetId = process.env.VUE_APP_TAWK_WIDGET_ID;
+    const propertyId = process.env.VUE_APP_TAWK_PROPERTY_ID_STAGING;
+    const widgetId = process.env.VUE_APP_TAWK_WIDGET_ID_STAGING;
     const s1 = document.createElement("script"),
       s0 = document.getElementsByTagName("script")[0];
     s1.async = true;

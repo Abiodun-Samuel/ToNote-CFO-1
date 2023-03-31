@@ -334,7 +334,7 @@ onUpdated(() => {
 });
 
 onMounted(() => {
-  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
+  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_STAGING;
   redirectToNotaryDashboard.value = process.env.VUE_APP_URL_NOTARY_STAGING;
 });
 </script>

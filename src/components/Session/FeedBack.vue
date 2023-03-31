@@ -113,7 +113,7 @@ const submit = () => {
     // );
     if (!userDocument.value.is_the_owner_of_document)
       return (window.location.href =
-        process.env.VUE_APP_URL_AUTH_LIVE + "/redirecting?qt=" + token.value);
+        process.env.VUE_APP_URL_AUTH_STAGING + "/redirecting?qt=" + token.value);
 
     if (userDocument.value.extra_seals >= 1) {
       window.location.href = "/session-payment";
@@ -125,7 +125,7 @@ const submit = () => {
 
 // const proceed = () => {
 //   if (!userDocument.value.is_the_owner_of_document)
-//     return (window.location.href = process.env.VUE_APP_URL_AUTH_LIVE);
+//     return (window.location.href = process.env.VUE_APP_URL_AUTH_STAGING);
 
 //   if (userDocument.value.extra_seals >= 1) {
 //     window.location.href = "/session-payment";

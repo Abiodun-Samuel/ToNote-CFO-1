@@ -5,7 +5,7 @@ import store from '@/store';
 let theBaseUrl = '';
 process.env.NODE_ENV == 'development'
   ? (theBaseUrl = process.env.VUE_APP_API_LOCAL)
-  : (theBaseUrl = process.env.VUE_APP_API_LIVE);
+  : (theBaseUrl = process.env.VUE_APP_API_STAGING);
 
 const Api = axios.create({
   baseURL: theBaseUrl,

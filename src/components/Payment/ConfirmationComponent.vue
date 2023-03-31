@@ -78,7 +78,7 @@ const copy_state = ref(false);
 const home =
   process.env.NODE_ENV == "development"
     ? process.env.VUE_APP_URL_NOTARY_REQ_LOCAL
-    : process.env.VUE_APP_URL_NOTARY_REQ_LIVE;
+    : process.env.VUE_APP_URL_NOTARY_REQ_STAGING;
 
 const { token, schedule_details } = useGetters({
   token: "auth/token",
@@ -105,7 +105,7 @@ onBeforeMount(() => {
   //   .dispatch("schedule/VirtualSessionDetailsAction", route.params.session_id)
 });
 onMounted(() => {
-  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
+  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_STAGING;
 });
 onUnmounted(() => {
   clearTimeout(clear.value);

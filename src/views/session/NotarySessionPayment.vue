@@ -176,7 +176,7 @@ export default {
       openpaymentSuccessful: true,
       paymentSuccessful: false,
       selectedPayment_gateway: "",
-      paystackkey: process.env.VUE_APP_PAYSTACK_PUBLIC_KEY_LOCAL,
+      paystackkey: process.env.VUE_APP_PAYSTACK_PUBLIC_KEY_STAGING,
     };
   },
   components: { paystack },
@@ -228,7 +228,7 @@ export default {
           toast.error("You have cancelled your payment");
         },
         payment_options: "card,ussd",
-        public_key: process.env.VUE_APP_FLUTTERWAVE_PUBLIC_KEY_LOCAL,
+        public_key: process.env.VUE_APP_FLUTTERWAVE_PUBLIC_KEY_STAGING,
         redirect_url: "http://localhost:8080/session-complete",
         // redirect_url: process.env.VUE_APP_SESSION_COMPLETE_LOCAL,
         tx_ref: this.reference,

@@ -214,7 +214,7 @@ onBeforeMount(() => {
   flag.value = route.query.f;
   documentId.value = route.query.di;
   Api.get(
-    process.env.VUE_APP_API_LIVE + "document-user-check/" + email.value
+    process.env.VUE_APP_API_STAGING + "document-user-check/" + email.value
   ).then((response) => {
     hasAccount.value = response.data.data.message;
     loading.value = false;
@@ -258,7 +258,7 @@ onMounted(() => {});
 // }
 forgotPassword.value =
   process.env.NODE_ENV != "development"
-    ? process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LIVE
+    ? process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_STAGING
     : process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LOCAL;
 </script>
 

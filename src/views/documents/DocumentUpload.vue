@@ -215,7 +215,7 @@ onMounted(() => {
     uri.value.qt != undefined || uri.value.qt != null ? uri.value.qt : token.value;
 
   if (hasToken.value == undefined || hasToken.value == "" || hasToken.value == null) {
-    return (window.location.href = process.env.VUE_APP_URL_AUTH_LIVE);
+    return (window.location.href = process.env.VUE_APP_URL_AUTH_STAGING);
   }
 
   dashboard.value.setToken(hasToken.value);

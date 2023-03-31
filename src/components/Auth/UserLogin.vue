@@ -51,7 +51,7 @@ onMounted(() => {
   if (environment.value == "development") return;
 
   // if (token.value == undefined)
-  //   return (window.location.href = process.env.VUE_APP_URL_AUTH_LIVE);
+  //   return (window.location.href = process.env.VUE_APP_URL_AUTH_STAGING);
 
   // setAuthentication({
   //   token: token.value,

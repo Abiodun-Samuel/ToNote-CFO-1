@@ -556,8 +556,8 @@ onMounted(() => {
     // isDocLoading.value = false;
   });
   // console.log(userDocument.value.documentUploads);
-  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
-  redirectToNotaryDashboard.value = process.env.VUE_APP_URL_NOTARY_LIVE;
+  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_STAGING;
+  redirectToNotaryDashboard.value = process.env.VUE_APP_URL_NOTARY_STAGING;
 
   let downloadLink = document.getElementById("download");
   uri.value = route.currentRoute.value.query;

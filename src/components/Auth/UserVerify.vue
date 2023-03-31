@@ -163,7 +163,7 @@ onMounted(() => {
   documentId.value = uri.value.di;
   flag.value = uri.value.f;
 
-  Api.get(process.env.VUE_APP_API_LIVE + "document-user-check/" + email.value).then(
+  Api.get(process.env.VUE_APP_API_STAGING + "document-user-check/" + email.value).then(
     (response) => {
       hasAccount.value = response.data.data.message;
       isGuest(!hasAccount.value)
@@ -172,7 +172,7 @@ onMounted(() => {
 
   forgotPassword.value =
     process.env.NODE_ENV != "development"
-      ? process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LIVE
+      ? process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_STAGING
       : process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LOCAL;
 });
 </script>

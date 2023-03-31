@@ -1032,7 +1032,7 @@ const notaryCompleteSession = () => {
 
 const closeGuest = () => {
   isGuest(false);
-  window.location.href = process.env.VUE_APP_URL_WEBSITE;
+  window.location.href = process.env.VUE_APP_URL_WEBSITE_STAGING;
 };
 const open = (params) => (isOpen.value = params);
 
@@ -1159,8 +1159,8 @@ onUpdated(() => {
 });
 
 onMounted(() => {
-  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
-  redirectToWebsite.value = process.env.VUE_APP_URL_WEBSITE;
+  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_STAGING;
+  redirectToWebsite.value = process.env.VUE_APP_URL_WEBSITE_STAGING;
   uri.value = route.currentRoute.value.params.document_id;
 
   if (token.value == null) return;
